@@ -5,13 +5,84 @@
 import { fileURLToPath } from "url";
 import path from "path";
 
-import { urlToRequest, interpolateName } from "loader-utils";
 import modulesValues from "postcss-modules-values";
 import localByDefault from "postcss-modules-local-by-default";
 import extractImports from "postcss-modules-extract-imports";
 import modulesScope from "postcss-modules-scope";
 
 const WEBPACK_IGNORE_COMMENT_REGEXP = /webpackIgnore:(\s+)?(true|false)/;
+
+const matchRelativePath = /^\.\.?[/\\]/;
+
+function isAbsolutePath(str) {
+  return path.posix.isAbsolute(str) || path.win32.isAbsolute(str);
+}
+
+function isRelativePath(str) {
+  return matchRelativePath.test(str);
+}
+
+function stringifyRequest(loaderContext, request) {
+  const splitted = request.split("!");
+  const { context } = loaderContext;
+
+  return JSON.stringify(
+    splitted
+      .map((part) => {
+        // First, separate singlePath from query, because the query might contain paths again
+        const splittedPart = part.match(/^(.*?)(\?.*)/);
+        const query = splittedPart ? splittedPart[2] : "";
+        let singlePath = splittedPart ? splittedPart[1] : part;
+
+        if (isAbsolutePath(singlePath) && context) {
+          singlePath = path.relative(context, singlePath);
+
+          if (isAbsolutePath(singlePath)) {
+            // If singlePath still matches an absolute path, singlePath was on a different drive than context.
+            // In this case, we leave the path platform-specific without replacing any separators.
+            // @see https://github.com/webpack/loader-utils/pull/14
+            return singlePath + query;
+          }
+
+          if (isRelativePath(singlePath) === false) {
+            // Ensure that the relative path starts at least with ./ otherwise it would be a request into the modules directory (like node_modules).
+            singlePath = `./${singlePath}`;
+          }
+        }
+
+        return singlePath.replace(/\\/g, "/") + query;
+      })
+      .join("!")
+  );
+}
+
+// we can't use path.win32.isAbsolute because it also matches paths starting with a forward slash
+const matchNativeWin32Path = /^[A-Z]:[/\\]|^\\\\/i;
+
+function urlToRequest(url, root) {
+  const moduleRequestRegex = /^[^?]*~/;
+  let request;
+
+  if (matchNativeWin32Path.test(url)) {
+    // absolute windows path, keep it
+    request = url;
+  } else if (typeof root !== "undefined" && /^\//.test(url)) {
+    request = root + url;
+  } else if (/^\.\.?\//.test(url)) {
+    // A relative url stays
+    request = url;
+  } else {
+    // every other url is threaded like a relative url
+    request = `./${url}`;
+  }
+
+  // A `~` makes the url an module
+  if (moduleRequestRegex.test(request)) {
+    request = request.replace(moduleRequestRegex, "");
+  }
+
+  return request;
+}
 
 // eslint-disable-next-line no-useless-escape
 const regexSingleEscape = /[ -,.\/:-@[\]\^`{-~]/;
@@ -240,6 +311,30 @@ function escapeLocalIdent(localident) {
   );
 }
 
+function resolveFolderTemplate(loaderContext, localIdentName, options) {
+  const { context } = options;
+  let { resourcePath } = loaderContext;
+  const parsed = path.parse(loaderContext.resourcePath);
+
+  if (parsed.dir) {
+    resourcePath = parsed.dir + path.sep;
+  }
+
+  let directory = path
+    .relative(context, `${resourcePath}_`)
+    .replace(/\\/g, "/")
+    .replace(/\.\.(\/)?/g, "_$1");
+  directory = directory.substr(0, directory.length - 1);
+
+  let folder = "";
+
+  if (directory.length > 1) {
+    folder = path.basename(directory);
+  }
+
+  return localIdentName.replace(/\[folder\]/gi, () => folder);
+}
+
 function defaultGetLocalIdent(
   loaderContext,
   localIdentName,
@@ -261,9 +356,75 @@ function defaultGetLocalIdent(
   );
 
   // eslint-disable-next-line no-param-reassign
-  options.content = `${options.hashPrefix}${relativeMatchResource}${relativeResourcePath}\x00${localName}`;
+  options.content = `${relativeMatchResource}${relativeResourcePath}\x00${localName}`;
 
-  return interpolateName(loaderContext, localIdentName, options);
+  let { hashFunction, hashDigest, hashDigestLength } = options;
+  const mathes = localIdentName.match(
+    /\[(?:([^:\]]+):)?(?:(hash|contenthash|fullhash))(?::([a-z]+\d*))?(?::(\d+))?\]/i
+  );
+
+  if (mathes) {
+    const hashName = mathes[2] || hashFunction;
+
+    hashFunction = mathes[1] || hashFunction;
+    hashDigest = mathes[3] || hashDigest;
+    hashDigestLength = mathes[4] || hashDigestLength;
+
+    // `hash` and `contenthash` are same in `loader-utils` context
+    // let's keep `hash` for backward compatibility
+
+    // eslint-disable-next-line no-param-reassign
+    localIdentName = localIdentName.replace(
+      /\[(?:([^:\]]+):)?(?:hash|contenthash|fullhash)(?::([a-z]+\d*))?(?::(\d+))?\]/gi,
+      () => (hashName === "fullhash" ? "[fullhash]" : "[contenthash]")
+    );
+  }
+
+  // eslint-disable-next-line no-underscore-dangle
+  const hash = loaderContext._compiler.webpack.util.createHash(hashFunction);
+  const { hashSalt } = options;
+
+  if (hashSalt) {
+    hash.update(hashSalt);
+  }
+
+  hash.update(options.content);
+
+  const localIdentHash = hash
+    .digest(hashDigest)
+    .slice(0, hashDigestLength)
+    .replace(/[/+]/g, "_")
+    .replace(/^\d/g, "_");
+
+  const ext = path.extname(loaderContext.resourcePath);
+  const base = path.basename(loaderContext.resourcePath);
+  const name = base.slice(0, base.length - ext.length);
+
+  const data = {
+    filename: path.relative(options.context, loaderContext.resourcePath),
+    contentHash: localIdentHash,
+    chunk: {
+      name,
+      hash: localIdentHash,
+      contentHash: localIdentHash,
+    },
+  };
+
+  // eslint-disable-next-line no-underscore-dangle
+  let interpolatedFilename = loaderContext._compilation.getPath(
+    localIdentName,
+    data
+  );
+
+  if (localIdentName.includes("[folder]")) {
+    interpolatedFilename = resolveFolderTemplate(
+      loaderContext,
+      interpolatedFilename,
+      options
+    );
+  }
+
+  return interpolatedFilename;
 }
 
 const NATIVE_WIN32_PATH = /^[A-Z]:[/\\]|^\\\\/i;
@@ -318,6 +479,10 @@ function getFilter(filter, resourcePath) {
   };
 }
 
+function getImportLoaders(loaders) {
+  return typeof loaders === "string" ? parseInt(loaders, 10) : loaders;
+}
+
 function getValidLocalName(localName, exportLocalsConvention) {
   if (exportLocalsConvention === "dashesOnly") {
     return dashesCamelCase(localName);
@@ -354,14 +519,19 @@ function getModulesOptions(rawOptions, loaderContext) {
     return false;
   }
 
+  // eslint-disable-next-line no-underscore-dangle
+  const { outputOptions } = loaderContext._compilation;
+
   let modulesOptions = {
-    compileType: isIcss ? "icss" : "module",
     auto: true,
-    mode: "local",
+    mode: isIcss ? "icss" : "local",
     exportGlobals: false,
     localIdentName: "[hash:base64]",
     localIdentContext: loaderContext.rootContext,
-    localIdentHashPrefix: "",
+    localIdentHashSalt: outputOptions.hashSalt,
+    localIdentHashFunction: outputOptions.hashFunction,
+    localIdentHashDigest: outputOptions.hashDigest,
+    localIdentHashDigestLength: outputOptions.hashDigestLength,
     // eslint-disable-next-line no-undefined
     localIdentRegExp: undefined,
     // eslint-disable-next-line no-undefined
@@ -438,6 +608,12 @@ function getModulesOptions(rawOptions, loaderContext) {
     );
   }
 
+  if (modulesOptions.localIdentName.includes("[folder]")) {
+    loaderContext.emitWarning(
+      "[folder] is deprecated and will be removed in next major release. See documentation for available options (https://github.com/webpack-contrib/css-loader#localidentname)"
+    );
+  }
+
   return modulesOptions;
 }
 
@@ -452,10 +628,6 @@ function normalizeOptions(rawOptions, loaderContext) {
       typeof rawOptions.sourceMap === "boolean"
         ? rawOptions.sourceMap
         : loaderContext.sourceMap,
-    importLoaders:
-      typeof rawOptions.importLoaders === "string"
-        ? parseInt(rawOptions.importLoaders, 10)
-        : rawOptions.importLoaders,
     esModule:
       typeof rawOptions.esModule === "undefined" ? true : rawOptions.esModule,
   };
@@ -486,7 +658,11 @@ function shouldUseURLPlugin(options) {
 }
 
 function shouldUseModulesPlugins(options) {
-  return options.modules.compileType === "module";
+  if (typeof options.modules === "boolean" && options.modules === false) {
+    return false;
+  }
+
+  return options.modules.mode !== "icss";
 }
 
 function shouldUseIcssPlugin(options) {
@@ -499,7 +675,10 @@ function getModulesPlugins(options, loaderContext) {
     getLocalIdent,
     localIdentName,
     localIdentContext,
-    localIdentHashPrefix,
+    localIdentHashSalt,
+    localIdentHashFunction,
+    localIdentHashDigest,
+    localIdentHashDigestLength,
     localIdentRegExp,
   } = options.modules;
 
@@ -521,7 +700,10 @@ function getModulesPlugins(options, loaderContext) {
               unescape(exportName),
               {
                 context: localIdentContext,
-                hashPrefix: localIdentHashPrefix,
+                hashSalt: localIdentHashSalt,
+                hashFunction: localIdentHashFunction,
+                hashDigest: localIdentHashDigest,
+                hashDigestLength: localIdentHashDigestLength,
                 regExp: localIdentRegExp,
               }
             );
@@ -536,7 +718,10 @@ function getModulesPlugins(options, loaderContext) {
               unescape(exportName),
               {
                 context: localIdentContext,
-                hashPrefix: localIdentHashPrefix,
+                hashSalt: localIdentHashSalt,
+                hashFunction: localIdentHashFunction,
+                hashDigest: localIdentHashDigest,
+                hashDigestLength: localIdentHashDigestLength,
                 regExp: localIdentRegExp,
               }
             );
@@ -651,7 +836,7 @@ function getImportCode(imports, options) {
   let code = "";
 
   for (const item of imports) {
-    const { importName, url, icss } = item;
+    const { importName, url, icss, type } = item;
 
     if (options.esModule) {
       if (icss && options.modules.namedExport) {
@@ -659,7 +844,10 @@ function getImportCode(imports, options) {
           options.modules.exportOnlyLocals ? "" : `${importName}, `
         }* as ${importName}_NAMED___ from ${url};\n`;
       } else {
-        code += `import ${importName} from ${url};\n`;
+        code +=
+          type === "url"
+            ? `var ${importName} = new URL(${url}, import.meta.url);\n`
+            : `import ${importName} from ${url};\n`;
       }
     } else {
       code += `var ${importName} = require(${url});\n`;
@@ -939,6 +1127,7 @@ export {
   normalizeUrl,
   requestify,
   getFilter,
+  getImportLoaders,
   getModulesOptions,
   getModulesPlugins,
   normalizeSourceMap,
@@ -952,4 +1141,5 @@ export {
   WEBPACK_IGNORE_COMMENT_REGEXP,
   combineRequests,
   camelCase,
+  stringifyRequest,
 };
