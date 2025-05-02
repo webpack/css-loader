@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`"url" option should resolve "file" protocol path when the "esModule" is "false": errors 1`] = `[]`;
 
