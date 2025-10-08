@@ -1,5 +1,5 @@
-@import url("https://raw.githubusercontent.com/webpack-contrib/css-loader/master/test/fixtures/url/imported.css");
+@import url("https://raw.githubusercontent.com/webpack/css-loader/main/test/fixtures/url/imported.css");
 
 a {
-    background: url("https://raw.githubusercontent.com/webpack-contrib/css-loader/master/test/fixtures/url/img.png");
+    background: url("https://raw.githubusercontent.com/webpack/css-loader/main/test/fixtures/url/img.png");
 }

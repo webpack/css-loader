@@ -67,7 +67,7 @@ module.exports = {
 
 Finally, run `webpack` using the method you normally use (e.g., via CLI or an npm script).
 
-If you need to extract CSS into a separate file (i.e. do not store CSS in a JS module), consider using the [recommend example](https://github.com/webpack-contrib/css-loader#recommend).
+If you need to extract CSS into a separate file (i.e. do not store CSS in a JS module), consider using the [recommend example](https://github.com/webpack/css-loader#recommend).
 
 ## Options
 
@@ -98,7 +98,7 @@ Enables or disables handling the CSS functions `url` and `image-set`.
 - If set to `false`, `css-loader` will not parse any paths specified in `url` or `image-set`.
 - You can also pass a function to control this behavior dynamically based on the asset path.
 
-As of version [4.0.0](https://github.com/webpack-contrib/css-loader/blob/master/CHANGELOG.md#400-2020-07-25), absolute paths are resolved based on the server root.
+As of version [4.0.0](https://github.com/webpack/css-loader/main/CHANGELOG.md#400-2020-07-25), absolute paths are resolved based on the server root.
 
 Examples resolutions:
 
@@ -357,8 +357,8 @@ Allows you to enable or disable CSS Modules or ICSS and configure them:
 - `undefined`: Enables CSS modules for all files matching `/\.module\.\w+$/i.test(filename)` or `/\.icss\.\w+$/i.test(filename)` regexp.
 - `true`: Enables CSS modules for all files.
 - `false`: Disables CSS Modules for all files.
-- `string`: Disables CSS Modules for all files and set the `mode` option (see [mode](https://github.com/webpack-contrib/css-loader#mode) for details).
-- `object`: Enables CSS modules for all files unless the `modules.auto` option is provided. otherwise the `modules.auto` option will determine whether if it is CSS Modules or not (see [auto](https://github.com/webpack-contrib/css-loader#auto) for more details).
+- `string`: Disables CSS Modules for all files and set the `mode` option (see [mode](https://github.com/webpack/css-loader#mode) for details).
+- `object`: Enables CSS modules for all files unless the `modules.auto` option is provided. otherwise the `modules.auto` option will determine whether if it is CSS Modules or not (see [auto](https://github.com/webpack/css-loader#auto) for more details).
 
 The `modules` option enables/disables the **[CSS Modules](https://github.com/css-modules/css-modules)** specification and configures its behavior.
 
@@ -1854,7 +1854,7 @@ import "./styles.css";
 >
 > You should not use [`style-loader`](https://github.com/webpack-contrib/style-loader) or [`mini-css-extract-plugin`](https://github.com/webpack-contrib/mini-css-extract-plugin) with this value.
 >
-> The `esModule` option should be enabled if you want to use it with [`CSS modules`](https://github.com/webpack-contrib/css-loader#modules). By default for locals [named export](https://github.com/webpack-contrib/css-loader#namedexport) will be used.
+> The `esModule` option should be enabled if you want to use it with [`CSS modules`](https://github.com/webpack/css-loader#modules). By default for locals [named export](https://github.com/webpack/css-loader#namedexport) will be used.
 
 The default export is `string`.
 
@@ -1893,7 +1893,7 @@ console.log(sheet);
 
 > [!WARNING]
 >
-> The `esModule` option should be enabled if you want to use it with [`CSS modules`](https://github.com/webpack-contrib/css-loader#modules). By default for locals [named export](https://github.com/webpack-contrib/css-loader#namedexport) will be used.
+> The `esModule` option should be enabled if you want to use it with [`CSS modules`](https://github.com/webpack/css-loader#modules). By default for locals [named export](https://github.com/webpack/css-loader#namedexport) will be used.
 
 > [!WARNING]
 >
@@ -2354,10 +2354,10 @@ If you are new here, please take a moment to review our contributing guidelines 
 [npm-url]: https://npmjs.com/package/css-loader
 [node]: https://img.shields.io/node/v/css-loader.svg
 [node-url]: https://nodejs.org
-[tests]: https://github.com/webpack-contrib/css-loader/workflows/css-loader/badge.svg
-[tests-url]: https://github.com/webpack-contrib/css-loader/actions
-[cover]: https://codecov.io/gh/webpack-contrib/css-loader/branch/master/graph/badge.svg
-[cover-url]: https://codecov.io/gh/webpack-contrib/css-loader
+[tests]: https://github.com/webpack/css-loader/workflows/css-loader/badge.svg
+[tests-url]: https://github.com/webpack/css-loader/actions
+[cover]: https://codecov.io/gh/webpack/css-loader/branch/main/graph/badge.svg
+[cover-url]: https://codecov.io/gh/webpack/css-loader
 [discussion]: https://img.shields.io/github/discussions/webpack/webpack
 [discussion-url]: https://github.com/webpack/webpack/discussions
 [size]: https://packagephobia.now.sh/badge?p=css-loader
