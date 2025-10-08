@@ -1852,7 +1852,7 @@ import "./styles.css";
 
 > [!WARNING]
 >
-> You should not use [`style-loader`](https://github.com/webpack-contrib/style-loader) or [`mini-css-extract-plugin`](https://github.com/webpack-contrib/mini-css-extract-plugin) with this value.
+> You should not use [`style-loader`](https://github.com/webpack/style-loader) or [`mini-css-extract-plugin`](https://github.com/webpack/mini-css-extract-plugin) with this value.
 >
 > The `esModule` option should be enabled if you want to use it with [`CSS modules`](https://github.com/webpack/css-loader#modules). By default for locals [named export](https://github.com/webpack/css-loader#namedexport) will be used.
 
@@ -1889,7 +1889,7 @@ console.log(sheet);
 
 > [!WARNING]
 >
-> You don't need [`style-loader`](https://github.com/webpack-contrib/style-loader) anymore, please remove it.
+> You don't need [`style-loader`](https://github.com/webpack/style-loader) anymore, please remove it.
 
 > [!WARNING]
 >
@@ -2004,9 +2004,9 @@ module.exports = {
 
 For `production` builds, it's recommended to extract the CSS from your bundle being able to use parallel loading of CSS/JS resources later on.
 
-This can be achieved by using the [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin), because it creates separate css files.
+This can be achieved by using the [mini-css-extract-plugin](https://github.com/webpack/mini-css-extract-plugin), because it creates separate css files.
 
-For `development` mode (including `webpack-dev-server`) you can use [style-loader](https://github.com/webpack-contrib/style-loader), because it injects CSS into the DOM using multiple `<style></style>` and works faster.
+For `development` mode (including `webpack-dev-server`) you can use [style-loader](https://github.com/webpack/style-loader), because it injects CSS into the DOM using multiple `<style></style>` and works faster.
 
 > [!NOTE]
 >
@@ -2123,7 +2123,7 @@ module.exports = {
 
 For production builds it's recommended to extract the CSS from your bundle to enable parallel loading of CSS/JS resources later on.
 
-- This can be achieved by using the [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) to extract the CSS when running in production mode.
+- This can be achieved by using the [mini-css-extract-plugin](https://github.com/webpack/mini-css-extract-plugin) to extract the CSS when running in production mode.
 
 - As an alternative, if seeking better development performance and css outputs that mimic production. [extract-css-chunks-webpack-plugin](https://github.com/faceyspacey/extract-css-chunks-webpack-plugin) offers a hot module reload friendly, extended version of mini-css-extract-plugin. HMR real CSS files in dev, works like mini-css in non-dev.
 
