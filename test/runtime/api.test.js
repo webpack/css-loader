@@ -241,7 +241,7 @@ describe("api", () => {
     expect(m.toString()).toMatchSnapshot();
   });
 
-  // https://github.com/webpack-contrib/css-loader/issues/1322
+  // https://github.com/webpack/css-loader/issues/1322
   it("should toString with a source map without map", () => {
     const m = api(sourceMaps);
 
