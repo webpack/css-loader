@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.3](https://github.com/webpack/css-loader/compare/v7.1.2...v7.1.3) (2026-01-27)
+
+
+### Bug Fixes
+
+* allow to use `module` class name ([#1649](https://github.com/webpack/css-loader/issues/1649)) ([01869bc](https://github.com/webpack/css-loader/commit/01869bcace63d17c4bfafedbc29c11965e62360d))
+* use official `createHash` for hashes ([#1618](https://github.com/webpack/css-loader/issues/1618)) ([06587e5](https://github.com/webpack/css-loader/commit/06587e54c6a580ee0c20e47021943aa9989acd5c))
+* use official `hash*` options for hashes ([#1619](https://github.com/webpack/css-loader/issues/1619)) ([9544c3e](https://github.com/webpack/css-loader/commit/9544c3e9a90c1c58476d3d87188f8ff39105294f))
+
 ### [7.1.2](https://github.com/webpack-contrib/css-loader/compare/v7.1.1...v7.1.2) (2024-05-22)
 
 
