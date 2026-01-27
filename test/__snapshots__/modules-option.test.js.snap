@@ -11817,7 +11817,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, \`.ComponentName-header {
 }
 
 .ComponentName-footer {
-  color: blue;  
+  color: blue;
 }
 \`, ""]);
 // Exports
@@ -11841,7 +11841,7 @@ exports[`"modules" option should work with [folder] #3: result 1`] = `
 }
 
 .ComponentName-footer {
-  color: blue;  
+  color: blue;
 }
 ",
     "",
@@ -11868,7 +11868,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, \`.ComponentName-header {
 }
 
 .ComponentName-footer {
-  color: blue;  
+  color: blue;
 }
 \`, ""]);
 // Exports
@@ -11892,7 +11892,7 @@ exports[`"modules" option should work with [folder] #4: result 1`] = `
 }
 
 .ComponentName-footer {
-  color: blue;  
+  color: blue;
 }
 ",
     "",
@@ -12430,6 +12430,29 @@ exports[`"modules" option should work with \`default\` class and without named e
 `;
 
 exports[`"modules" option should work with \`default\` class and without named export: warnings 1`] = `[]`;
+
+exports[`"modules" option should work with \`module\` class and with named export: errors 1`] = `[]`;
+
+exports[`"modules" option should work with \`module\` class and with named export: module 1`] = `
+"// Imports
+import ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ from "../../../../src/runtime/noSourceMaps.js";
+import ___CSS_LOADER_API_IMPORT___ from "../../../../src/runtime/api.js";
+var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, \`.jeU4gq1x5FP0ehaW1cBG {
+  background: red
+}
+\`, ""]);
+// Exports
+var _1 = \`jeU4gq1x5FP0ehaW1cBG\`;
+export { _1 as "module" };
+export default ___CSS_LOADER_EXPORT___;
+"
+`;
+
+exports[`"modules" option should work with \`module\` class and with named export: result 1`] = `"jeU4gq1x5FP0ehaW1cBG"`;
+
+exports[`"modules" option should work with \`module\` class and with named export: warnings 1`] = `[]`;
 
 exports[`"modules" option should work with CSS nesting: errors 1`] = `[]`;
 

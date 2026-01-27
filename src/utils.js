@@ -1183,6 +1183,7 @@ const keywords = new Set([
   "volatile",
   "while",
   "with",
+  "module",
 ]);
 
 function getExportCode(
