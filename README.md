@@ -1759,6 +1759,14 @@ Default: `true`
 
 By default, `css-loader` generates JS modules that use the ES modules syntax.
 
+This means you can import CSS using standard ES `import` syntax, which is the
+recommended approach for modern JavaScript applications and frameworks
+like React, Vue, and Angular.
+
+Set `esModule: false` only if your environment expects CommonJS syntax
+(for example, when using `require()` instead of `import`).
+
+
 There are some cases in which using ES modules is beneficial, like in the case of [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
 
 You can enable CommonJS module syntax using:
@@ -1780,7 +1788,7 @@ module.exports = {
   },
 };
 ```
-
+hh
 ### `exportType`
 
 Type:
@@ -2336,6 +2344,8 @@ import * as styles from "Component.module.scss";
 // Somewhere in JavaScript canvas drawing code use the variable directly
 // const ctx = mountsCanvas.current.getContext('2d',{alpha: false});
 ctx.fillStyle = `${svars.colorBackgroundCanvas}`;
+
+kjk
 ```
 
 ## Contributing
