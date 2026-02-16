@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.4](https://github.com/webpack/css-loader/compare/v7.1.3...v7.1.4) (2026-02-16)
+
+
+### Bug Fixes
+
+* update peer dependency for @rspack/core v2 ([#1652](https://github.com/webpack/css-loader/issues/1652)) ([aeddefe](https://github.com/webpack/css-loader/commit/aeddefee8feb6fe22dd3f98cd2fc2bac50dc7c45))
+
 ### [7.1.3](https://github.com/webpack/css-loader/compare/v7.1.2...v7.1.3) (2026-01-27)
 
 
