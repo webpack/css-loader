@@ -42,6 +42,18 @@ or
 pnpm add -D css-loader
 ```
 
+In the example configuration below, `style-loader` is used to inject the processed CSS into the DOM during runtime. You may need to install it as well:
+
+```console
+npm install --save-dev style-loader
+```
+
+If it is not installed, webpack may report an error such as:
+
+```text
+Module not found: Error: Can't resolve 'style-loader'
+```
+
 Then, add the loader to your `webpack` configuration. For example:
 
 **file.js**
