@@ -24,31 +24,25 @@ The `css-loader` interprets `@import` and `url()` like `import/require()` and re
 >
 > To use the latest version of css-loader, webpack@5 is required
 
-To begin, you'll need to install `css-loader`:
+To begin, you'll need to install `css-loader`. In the example below, `style-loader` is also used to inject the processed CSS into the DOM during runtime.
 
 ```console
-npm install --save-dev css-loader
+npm install --save-dev css-loader style-loader
 ```
 
 or
 
 ```console
-yarn add -D css-loader
+yarn add -D css-loader style-loader
 ```
 
 or
 
 ```console
-pnpm add -D css-loader
+pnpm add -D css-loader style-loader
 ```
 
-In the example configuration below, `style-loader` is used to inject the processed CSS into the DOM during runtime. You may need to install it as well:
-
-```console
-npm install --save-dev style-loader
-```
-
-If it is not installed, webpack may report an error such as:
+If it is not installed, webpack may report an error similar to:
 
 ```text
 Module not found: Error: Can't resolve 'style-loader'
