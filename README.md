@@ -54,6 +54,7 @@ import * as css from "file.css";
 
 ```js
 module.exports = {
+  // other configuration options..
   module: {
     rules: [
       {
