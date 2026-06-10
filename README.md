@@ -1,64 +1,41 @@
-<div align="center">
-  <img width="180" height="180" vspace="20"
-    src="https://cdn.worldvectorlogo.com/logos/css-3.svg">
-  <a href="https://github.com/webpack/webpack">
-    <img width="200" height="200"
-      src="https://webpack.js.org/assets/icon-square-big.svg">
-  </a>
-</div>
-
-[![npm][npm]][npm-url]
-[![node][node]][node-url]
-[![tests][tests]][tests-url]
-[![coverage][cover]][cover-url]
-[![discussion][discussion]][discussion-url]
-[![size][size]][size-url]
-
 # css-loader
 
-The `css-loader` interprets `@import` and `url()` like `import/require()` and resolves them.
+The `css-loader` interprets `@import` and `url()` like `import`/`require()` and
+resolves them.
 
 ## Getting Started
 
 > [!WARNING]
->
-> To use the latest version of css-loader, webpack@5 is required
+> To use the latest version of css-loader, webpack v5.0.0 or greater is required.
 
 To begin, you'll need to install `css-loader`:
 
-```console
+```bash displayName="npm"
 npm install --save-dev css-loader
 ```
 
-or
-
-```console
+```bash displayName="yarn"
 yarn add -D css-loader
 ```
 
-or
-
-```console
+```bash displayName="pnpm"
 pnpm add -D css-loader
 ```
 
-In the example configuration below, `style-loader` is used to inject the processed CSS into the DOM during runtime. You may need to install it as well:
+In the example configuration below, `style-loader` is used to inject the
+processed CSS into the DOM during runtime. You may need to install it as well:
 
-```console
+```bash
 npm install --save-dev style-loader
 ```
 
 Then, add the loader to your `webpack` configuration. For example:
 
-**file.js**
-
-```js
+```js displayName="file.js"
 import * as css from "file.css";
 ```
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -71,25 +48,20 @@ module.exports = {
 };
 ```
 
-Finally, run `webpack` using the method you normally use (e.g., via CLI or an npm script).
+Finally, run `webpack` using the method you normally use (e.g., via CLI or an
+npm script).
 
-If you need to extract CSS into a separate file (i.e. do not store CSS in a JS module), consider using the [recommend example](https://github.com/webpack/css-loader#recommend).
+If you need to extract CSS into a separate file (i.e. do not store CSS in a JS
+module), consider using the [recommend example](#recommend).
 
 ## Options
 
-- **[`url`](#url)**
-- **[`import`](#import)**
-- **[`modules`](#modules)**
-- **[`sourceMap`](#sourcemap)**
-- **[`importLoaders`](#importloaders)**
-- **[`esModule`](#esmodule)**
-- **[`exportType`](#exporttype)**
-
 ### `url`
 
-Type:
+- Type: {boolean|Object}
+- **Default:** `true`.
 
-```ts
+```ts displayName="Type"
 type url =
   | boolean
   | {
@@ -97,16 +69,16 @@ type url =
     };
 ```
 
-Default: `true`
-
 Enables or disables handling the CSS functions `url` and `image-set`.
 
-- If set to `false`, `css-loader` will not parse any paths specified in `url` or `image-set`.
-- You can also pass a function to control this behavior dynamically based on the asset path.
+If set to `false`, `css-loader` will not parse any paths specified in `url` or
+`image-set`. You can also pass a function to control this behavior dynamically
+based on the asset path.
 
-As of version [4.0.0](https://github.com/webpack/css-loader/main/CHANGELOG.md#400-2020-07-25), absolute paths are resolved based on the server root.
+As of version [4.0.0](https://github.com/webpack/css-loader/blob/main/CHANGELOG.md#400-2020-07-25), absolute paths are resolved based on the
+server root.
 
-Examples resolutions:
+Example resolutions:
 
 ```js
 url(image.png) => require('./image.png')
@@ -117,7 +89,8 @@ url('http://dontwritehorriblecode.com/2112.png') => require('http://dontwritehor
 image-set(url('image2x.png') 1x, url('image1x.png') 2x) => require('./image1x.png') and require('./image2x.png')
 ```
 
-To import assets from a `node_modules` path (including `resolve.modules`) or an `alias`, prefix it with a `~`:
+To import assets from a `node_modules` path (including `resolve.modules`) or an
+`alias`, prefix it with a `~`:
 
 ```js
 url(~module/image.png) => require('module/image.png')
@@ -129,9 +102,7 @@ url(~aliasDirectory/image.png) => require('otherDirectory/image.png')
 
 Enable/disable `url()` resolving.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -151,11 +122,10 @@ module.exports = {
 
 Allows filtering of `url()` values.
 
-Any filtered `url()` will not be resolved (left in the code as they were written).
+Any filtered `url()` will not be resolved (left in the code as they were
+written).
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -189,11 +159,10 @@ module.exports = {
 
 ### `import`
 
-Type:
+- Type: {boolean|Object}
+- **Default:** `true`.
 
-<!-- use other name to prettify since import is reserved keyword -->
-
-```ts
+```ts displayName="Type"
 type importFn =
   | boolean
   | {
@@ -207,17 +176,13 @@ type importFn =
     };
 ```
 
-Default: `true`
+Allows you to enable or disable handling of `@import` at-rules. Controls how
+`@import` statements are resolved. Absolute URLs in `@import` will be moved in
+runtime code.
 
-Allows you to enable or disable handling of `@import` at-rules.
+Example resolutions:
 
-Controls how `@import` statements are resolved.
-
-Absolute URLs in `@import` will be moved in runtime code.
-
-Examples resolutions:
-
-```
+```css
 @import 'style.css' => require('./style.css')
 @import url(style.css) => require('./style.css')
 @import url('style.css') => require('./style.css')
@@ -227,9 +192,10 @@ Examples resolutions:
 @import url('http://dontwritehorriblecode.com/style.css') => @import url('http://dontwritehorriblecode.com/style.css') in runtime
 ```
 
-To import styles from a `node_modules` path (include `resolve.modules`) or an `alias`, prefix it with a `~`:
+To import styles from a `node_modules` path (include `resolve.modules`) or an
+`alias`, prefix it with a `~`:
 
-```
+```css
 @import url(~module/style.css) => require('module/style.css')
 @import url('~module/style.css') => require('module/style.css')
 @import url(~aliasDirectory/style.css) => require('otherDirectory/style.css')
@@ -239,9 +205,7 @@ To import styles from a `node_modules` path (include `resolve.modules`) or an `a
 
 Enable/disable `@import` resolving.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -261,21 +225,19 @@ module.exports = {
 
 ##### `filter`
 
-Type:
+- Type: {Function}
+- **Default:** `undefined`.
 
-```ts
+```ts displayName="Type"
 type filter = (url: string, media: string, resourcePath: string) => boolean;
 ```
 
-Default: `undefined`
-
 Allows filtering of `@import`.
 
-Any filtered `@import` will not be resolved (left in the code as they were written).
+Any filtered `@import` will not be resolved (left in the code as they were
+written).
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -304,9 +266,10 @@ module.exports = {
 
 ### `modules`
 
-Type:
+- Type: {boolean|string|Object}
+- **Default:** `undefined`.
 
-```ts
+```ts displayName="Type"
 type modules =
   | boolean
   | "local"
@@ -356,23 +319,26 @@ type modules =
     };
 ```
 
-Default: `undefined`
-
 Allows you to enable or disable CSS Modules or ICSS and configure them:
 
-- `undefined`: Enables CSS modules for all files matching `/\.module\.\w+$/i.test(filename)` or `/\.icss\.\w+$/i.test(filename)` regexp.
+- `undefined`: Enables CSS modules for all files matching
+  `/\.module\.\w+$/i.test(filename)` or `/\.icss\.\w+$/i.test(filename)` regexp.
 - `true`: Enables CSS modules for all files.
 - `false`: Disables CSS Modules for all files.
-- `string`: Disables CSS Modules for all files and set the `mode` option (see [mode](https://github.com/webpack/css-loader#mode) for details).
-- `object`: Enables CSS modules for all files unless the `modules.auto` option is provided. otherwise the `modules.auto` option will determine whether if it is CSS Modules or not (see [auto](https://github.com/webpack/css-loader#auto) for more details).
+- `string`: Disables CSS Modules for all files and sets the `mode` option (see
+  [mode][mode] for details).
+- `object`: Enables CSS modules for all files unless the `modules.auto` option
+  is provided, otherwise the `modules.auto` option will determine whether it is
+  CSS Modules or not (see [auto](#auto) for more details).
 
-The `modules` option enables/disables the **[CSS Modules](https://github.com/css-modules/css-modules)** specification and configures its behavior.
+The `modules` option enables/disables the [CSS Modules][css-modules]
+specification and configures its behavior.
 
-Setting `modules: false` can improve performance because we avoid parsing **CSS Modules** features, this is useful for developers using use vanilla CSS or other technologies.
+Setting `modules: false` can improve performance because we avoid parsing CSS
+Modules features; this is useful for developers using vanilla CSS or other
+technologies.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -388,25 +354,32 @@ module.exports = {
 };
 ```
 
-#### `Features`
+#### Features
 
-##### `Scope`
+##### Scope
 
 - Using `local` value requires you to specify `:global` classes.
 - Using `global` value requires you to specify `:local` classes.
-- Using `pure` value requires selectors must contain at least one local class or ID.
+- Using `pure` value requires selectors to contain at least one local class or
+  ID.
 
-You can find more information on scoping module [here](https://github.com/css-modules/css-modules).
+You can find more information on scoping modules [here][css-modules].
 
-With CSS Modules, styles are scoped locally, preventing conflicts with global styles.
+With CSS Modules, styles are scoped locally, preventing conflicts with global
+styles.
 
-Use `:local(.className)` to declare a `className` in the local scope. The local identifiers are exported by the module.
+Use `:local(.className)` to declare a `className` in the local scope. The local
+identifiers are exported by the module.
 
-- With `:local` (without parentheses) local mode can be switched `on` for this selector.
-- The `:global(.className)` notation can be used to declare an explicit global selector.
-- With `:global` (without parentheses) global mode can be switched `on` for this selector.
+- With `:local` (without parentheses) local mode can be switched `on` for this
+  selector.
+- The `:global(.className)` notation can be used to declare an explicit global
+  selector.
+- With `:global` (without parentheses) global mode can be switched `on` for
+  this selector.
 
-The loader replaces local selectors with unique, scoped identifiers. The chosen unique identifiers are exported by the module.
+The loader replaces local selectors with unique, scoped identifiers. The chosen
+unique identifiers are exported by the module.
 
 ```css
 :local(.className) {
@@ -440,9 +413,7 @@ Output (example):
 }
 ```
 
-> [!NOTE]
->
-> Identifiers are exported
+Identifiers are exported:
 
 ```js
 exports.locals = {
@@ -451,13 +422,16 @@ exports.locals = {
 };
 ```
 
-CamelCase naming is recommended for local selectors, as it simplifies usage in imported JS modules.
+CamelCase naming is recommended for local selectors, as it simplifies usage in
+imported JS modules.
 
-Although you can use `:local(#someId)`, but this is not recommended. Prefer classes instead of IDs for modular styling.
+Although you can use `:local(#someId)`, this is not recommended. Prefer classes
+instead of IDs for modular styling.
 
-##### `Composing`
+##### Composing
 
-When declaring a local class name, you can compose it from one or more other local class names.
+When declaring a local class name, you can compose it from one or more other
+local class names.
 
 ```css
 :local(.className) {
@@ -471,7 +445,8 @@ When declaring a local class name, you can compose it from one or more other loc
 }
 ```
 
-This does not alter the final CSS output, but the generated `subClass` will include both class names in its export.
+This does not alter the final CSS output, but the generated `subClass` will
+include both class names in its export.
 
 ```js
 exports.locals = {
@@ -491,13 +466,13 @@ exports.locals = {
 }
 ```
 
-##### `Importing`
+##### Importing
 
-To import a local class names from another module.
+To import local class names from another module:
 
-> [!NOTE]
->
-> It is highly recommended to include file extensions when importing a file, since it is possible to import a file with any extension and it is not known in advance which file to use.
+It is highly recommended to include file extensions when importing a file,
+since it is possible to import a file with any extension and it is not known in
+advance which file to use.
 
 ```css
 :local(.continueButton) {
@@ -536,9 +511,9 @@ or
 }
 ```
 
-##### `Values`
+##### Values
 
-You can use `@value` to specific values to be reused throughout a document.
+You can use `@value` to specify values to be reused throughout a document.
 
 We recommend following a naming convention:
 
@@ -547,7 +522,7 @@ We recommend following a naming convention:
 - `m-` prefix for media at-rules.
 
 ```css
-@value v-primary: #BF4040;
+@value v-primary: #bf4040;
 @value s-black: black-selector;
 @value m-large: (min-width: 960px);
 
@@ -569,11 +544,9 @@ We recommend following a naming convention:
 
 #### `boolean`
 
-Enable **CSS Modules** features.
+Enable CSS Modules features.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -591,11 +564,9 @@ module.exports = {
 
 #### `string`
 
-Enable **CSS Modules** features and setup `mode`.
+Enable CSS Modules features and set up `mode`.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -614,11 +585,9 @@ module.exports = {
 
 #### `object`
 
-Enable **CSS Modules** features and configure its behavior through `options`.
+Enable CSS Modules features and configure its behavior through `options`.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -647,9 +616,10 @@ module.exports = {
 
 ##### `auto`
 
-Type:
+- Type: {boolean|RegExp|Function}
+- **Default:** `undefined`.
 
-```ts
+```ts displayName="Type"
 type auto =
   | boolean
   | regExp
@@ -660,28 +630,33 @@ type auto =
     ) => boolean);
 ```
 
-Default: `undefined`
-
-Allows auto enable CSS modules or ICSS based on the file name, query or fragment when `modules` option is an object.
+Allows auto-enabling CSS modules or ICSS based on the file name, query or
+fragment when the `modules` option is an object.
 
 Possible values:
 
 - `undefined`: Enables CSS modules for all files.
-- `true`: Enables CSS modules for files matching `/\.module\.\w+$/i.test(filename)` and `/\.icss\.\w+$/i.test(filename)` regexp.
+- `true`: Enables CSS modules for files matching
+  `/\.module\.\w+$/i.test(filename)` and `/\.icss\.\w+$/i.test(filename)`
+  regexp.
 - `false`: Disables CSS Modules for all files.
-- `RegExp`: Enables CSS modules for all files matching `/RegExp/i.test(filename)` regexp.
-- `function`: Enables CSS Modules for files based on the file name satisfying your filter function check.
+- `RegExp`: Enables CSS modules for all files matching
+  `/RegExp/i.test(filename)` regexp.
+- `function`: Enables CSS Modules for files based on the file name satisfying
+  your filter function check.
 
 ###### `boolean`
 
 Possible values:
 
-- `true`: Enables CSS modules or Interoperable CSS (ICSS) format, sets the [`modules.mode`](#mode) option to `local` value for all files which satisfy `/\.module(s)?\.\w+$/i.test(filename)` condition or sets the [`modules.mode`](#mode) option to `icss` value for all files which satisfy `/\.icss\.\w+$/i.test(filename)` condition.
+- `true`: Enables CSS modules or Interoperable CSS (ICSS) format, sets the
+  [`modules.mode`][mode] option to `local` value for all files which satisfy
+  `/\.module(s)?\.\w+$/i.test(filename)` condition or sets the
+  [`modules.mode`][mode] option to `icss` value for all files which satisfy
+  `/\.icss\.\w+$/i.test(filename)` condition.
 - `false`: Disables CSS modules or ICSS format based on filename for all files.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -703,9 +678,7 @@ module.exports = {
 
 Enables CSS modules for files based on the filename satisfying your regex check.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -725,11 +698,10 @@ module.exports = {
 
 ###### `function`
 
-Enables CSS Modules for files based on the filename, query or fragment satisfying your filter function check.
+Enables CSS Modules for files based on the filename, query or fragment
+satisfying your filter function check.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -751,9 +723,10 @@ module.exports = {
 
 ##### `mode`
 
-Type:
+- Type: {string|Function}
+- **Default:** `'local'`.
 
-```ts
+```ts displayName="Type"
 type mode =
   | "local"
   | "global"
@@ -766,24 +739,24 @@ type mode =
     ) => "local" | "global" | "pure" | "icss");
 ```
 
-Default: `'local'`
-
-Setup `mode` option. You can omit the value when you want `local` mode.
+Set up the `mode` option. You can omit the value when you want `local` mode.
 
 Controls the level of compilation applied to the input styles.
 
-- The `local`, `global`, and `pure` handles `class` and `id` scoping and `@value` values.
-- The `icss` will only compile the low level `Interoperable CSS (ICSS)` format for declaring `:import` and `:export` dependencies between CSS and other languages.
+- The `local`, `global`, and `pure` handle `class` and `id` scoping and
+  `@value` values.
+- The `icss` will only compile the low-level Interoperable CSS (ICSS) format
+  for declaring `:import` and `:export` dependencies between CSS and other
+  languages.
 
-ICSS underpins CSS Module support, and provides a low level syntax for other tools to implement CSS-module variations of their own.
+ICSS underpins CSS Module support, and provides a low-level syntax for other
+tools to implement CSS-module variations of their own.
 
 ###### `string`
 
 Possible values - `local`, `global`, `pure`, and `icss`.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -803,12 +776,11 @@ module.exports = {
 
 ###### `function`
 
-Allows setting different values for the `mode` option based on the filename, query or fragment.
-Possible return values - `local`, `global`, `pure` and `icss`.
+Allows setting different values for the `mode` option based on the filename,
+query or fragment. Possible return values - `local`, `global`, `pure` and
+`icss`.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -839,33 +811,37 @@ module.exports = {
 
 ##### `localIdentName`
 
-Type:
+- Type: {string}
+- **Default:** `'[hash:base64]'`.
 
-```ts
+```ts displayName="Type"
 type localIdentName = string;
 ```
 
-Default: `'[hash:base64]'`
-
-Allows to configure the generated local ident name.
+Allows configuring the generated local ident name.
 
 For more information on options see:
 
 - [webpack template strings](https://webpack.js.org/configuration/output/#template-strings),
-- [output.hashDigest](https://webpack.js.org/configuration/output/#outputhashdigest),
-- [output.hashDigestLength](https://webpack.js.org/configuration/output/#outputhashdigestlength),
-- [output.hashFunction](https://webpack.js.org/configuration/output/#outputhashfunction),
-- [output.hashSalt](https://webpack.js.org/configuration/output/#outputhashsalt).
+- [output.hashDigest][output-hash-digest],
+- [output.hashDigestLength][output-hash-digest-length],
+- [output.hashFunction][output-hash-function],
+- [output.hashSalt][output-hash-salt].
 
 Supported template strings:
 
 - `[name]` the basename of the resource
-- `[folder]` the folder the resource relative to the `compiler.context` option or `modules.localIdentContext` option.
-- `[path]` the path of the resource relative to the `compiler.context` option or `modules.localIdentContext` option.
+- `[folder]` the folder the resource is relative to the `compiler.context`
+  option or `modules.localIdentContext` option.
+- `[path]` the path of the resource relative to the `compiler.context` option
+  or `modules.localIdentContext` option.
 - `[file]` - filename and path.
 - `[ext]` - extension with leading `.`.
-- `[hash]` - the hash of the string, generated based on `localIdentHashSalt`, `localIdentHashFunction`, `localIdentHashDigest`, `localIdentHashDigestLength`, `localIdentContext`, `resourcePath` and `exportName`
-- `[<hashFunction>:hash:<hashDigest>:<hashDigestLength>]` - hash with hash settings.
+- `[hash]` - the hash of the string, generated based on `localIdentHashSalt`,
+  `localIdentHashFunction`, `localIdentHashDigest`, `localIdentHashDigestLength`,
+  `localIdentContext`, `resourcePath` and `exportName`
+- `[<hashFunction>:hash:<hashDigest>:<hashDigestLength>]` - hash with hash
+  settings.
 - `[local]` - original class.
 
 Recommendations:
@@ -873,13 +849,12 @@ Recommendations:
 - Use `'[path][name]__[local]'` for development
 - Use `'[hash:base64]'` for production
 
-The `[local]` placeholder contains original class.
+The `[local]` placeholder contains the original class.
 
-**Note:** all reserved characters (`<>:"/\|?*`) and control filesystem characters (excluding characters in the `[local]` placeholder) will be converted to `-`.
+All reserved characters (`<>:"/\|?*`) and control filesystem characters
+(excluding characters in the `[local]` placeholder) will be converted to `-`.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -899,19 +874,16 @@ module.exports = {
 
 ##### `localIdentContext`
 
-Type:
+- Type: {string}
+- **Default:** `compiler.context`.
 
-```ts
+```ts displayName="Type"
 type localIdentContex = string;
 ```
 
-Default: `compiler.context`
-
 Allows redefining the basic loader context for local ident name.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -931,21 +903,18 @@ module.exports = {
 
 ##### `localIdentHashSalt`
 
-Type:
+- Type: {string}
+- **Default:** `undefined`.
 
-```ts
+```ts displayName="Type"
 type localIdentHashSalt = string;
 ```
 
-Default: `undefined`
+Allows adding a custom hash to generate more unique classes.
 
-Allows to add custom hash to generate more unique classes.
+For more information see [output.hashSalt][output-hash-salt].
 
-For more information see [output.hashSalt](https://webpack.js.org/configuration/output/#outputhashsalt).
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -965,21 +934,18 @@ module.exports = {
 
 ##### `localIdentHashFunction`
 
-Type:
+- Type: {string}
+- **Default:** `md4`.
 
-```ts
+```ts displayName="Type"
 type localIdentHashFunction = string;
 ```
 
-Default: `md4`
+Allows specifying a hash function to generate classes.
 
-Allows to specify hash function to generate classes .
+For more information see [output.hashFunction][output-hash-function].
 
-For more information see [output.hashFunction](https://webpack.js.org/configuration/output/#outputhashfunction).
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -999,21 +965,18 @@ module.exports = {
 
 ##### `localIdentHashDigest`
 
-Type:
+- Type: {string}
+- **Default:** `hex`.
 
-```ts
+```ts displayName="Type"
 type localIdentHashDigest = string;
 ```
 
-Default: `hex`
+Allows specifying a hash digest to generate classes.
 
-Allows to specify hash digest to generate classes.
+For more information see [output.hashDigest][output-hash-digest].
 
-For more information see [output.hashDigest](https://webpack.js.org/configuration/output/#outputhashdigest).
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1033,21 +996,18 @@ module.exports = {
 
 ##### `localIdentHashDigestLength`
 
-Type:
+- Type: {number}
+- **Default:** `20`.
 
-```ts
+```ts displayName="Type"
 type localIdentHashDigestLength = number;
 ```
 
-Default: `20`
+Allows specifying a hash digest length to generate classes.
 
-Allows to specify hash digest length to generate classes.
+For more information, see [output.hashDigestLength][output-hash-digest-length].
 
-For more information, see [output.hashDigestLength](https://webpack.js.org/configuration/output/#outputhashdigestlength).
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1067,17 +1027,20 @@ module.exports = {
 
 ##### `hashStrategy`
 
-Type: `'resource-path-and-local-name' | 'minimal-subset'`
-Default: `'resource-path-and-local-name'`
+- Type: {string}
+- **Default:** `'resource-path-and-local-name'`.
 
-Should local name be used when computing the hash.
+Possible values - `'resource-path-and-local-name'` or `'minimal-subset'`.
 
-- `'resource-path-and-local-name'` Both resource path and local name are used when hashing. Each identifier in a module gets its own hash digest, always.
-- `'minimal-subset'` Auto detect if identifier names can be omitted from hashing. Use this value to optimize the output for better GZIP or Brotli compression.
+Should the local name be used when computing the hash.
 
-**webpack.config.js**
+- `'resource-path-and-local-name'` Both resource path and local name are used
+  when hashing. Each identifier in a module gets its own hash digest, always.
+- `'minimal-subset'` Auto-detect if identifier names can be omitted from
+  hashing. Use this value to optimize the output for better GZIP or Brotli
+  compression.
 
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1097,17 +1060,14 @@ module.exports = {
 
 ##### `localIdentRegExp`
 
-Type:
+- Type: {string|RegExp}
+- **Default:** `undefined`.
 
-```ts
+```ts displayName="Type"
 type localIdentRegExp = string | RegExp;
 ```
 
-Default: `undefined`
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1127,9 +1087,10 @@ module.exports = {
 
 ##### `getLocalIdent`
 
-Type:
+- Type: {Function}
+- **Default:** `undefined`.
 
-```ts
+```ts displayName="Type"
 type getLocalIdent = (
   context: LoaderContext,
   localIdentName: string,
@@ -1137,17 +1098,14 @@ type getLocalIdent = (
 ) => string;
 ```
 
-Default: `undefined`
+Allows specifying a function to generate the classname.
 
-Allows to specify a function to generate the classname.
+By default we use a built-in function to generate a classname.
 
-By default we use built-in function to generate a classname.
+If your custom function returns `null` or `undefined`, the built-in generator
+is used as a `fallback`.
 
-If your custom function returns `null` or `undefined`, the built-in generator is used as a `fallback`.
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1169,23 +1127,22 @@ module.exports = {
 
 ##### `namedExport`
 
-Type:
+- Type: {boolean}
+- **Default:** Depends on the value of the `esModule` option. If the value of
+  the `esModule` option is `true`, `namedExport` defaults to `true`; otherwise,
+  it defaults to `false`.
 
-```ts
+```ts displayName="Type"
 type namedExport = boolean;
 ```
 
-Default: Depends on the value of the `esModule` option. If the value of the `esModule` options is `true`, `namedExport` defaults to `true` ; otherwise, it defaults to `false`.
-
 Enables or disables ES modules named export for locals.
 
-> [!WARNING]
->
-> The `default` class name cannot be used directly when `namedExport` is `true` because `default` is a reserved keyword in ECMAScript modules. It is automatically renamed to `_default`.
+The `default` class name cannot be used directly when `namedExport` is `true`
+because `default` is a reserved keyword in ECMAScript modules. It is
+automatically renamed to `_default`.
 
-**styles.css**
-
-```css
+```css displayName="styles.css"
 .foo-baz {
   color: red;
 }
@@ -1197,9 +1154,7 @@ Enables or disables ES modules named export for locals.
 }
 ```
 
-**index.js**
-
-```js
+```js displayName="index.js"
 import * as styles from "./styles.css";
 
 // If using `exportLocalsConvention: "as-is"` (default value):
@@ -1214,9 +1169,7 @@ console.log(styles["_default"]);
 
 You can enable ES module named export using:
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1235,25 +1188,23 @@ module.exports = {
 };
 ```
 
-To set a custom name for namedExport, can use [`exportLocalsConvention`](#exportLocalsConvention) option as a function.
-
-See below in the [`examples`](#examples) section.
+To set a custom name for `namedExport`, you can use the
+[`exportLocalsConvention`](#exportlocalsconvention) option as a function. See
+below in the [`examples`](#examples) section.
 
 ##### `exportGlobals`
 
-Type:
+- Type: {boolean}
+- **Default:** `false`.
 
-```ts
+```ts displayName="Type"
 type exportsGLobals = boolean;
 ```
 
-Default: `false`
+Allow `css-loader` to export names from global class or ID, so you can use that
+as a local name.
 
-Allow `css-loader` to export names from global class or ID, so you can use that as local name.
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1273,9 +1224,12 @@ module.exports = {
 
 ##### `exportLocalsConvention`
 
-Type:
+- Type: {string|Function}
+- **Default:** Depends on the value of the `modules.namedExport` option. If
+  `true` - `as-is`; otherwise `camel-case-only` (class names converted to
+  camelCase, original name removed).
 
-```ts
+```ts displayName="Type"
 type exportLocalsConvention =
   | "as-is"
   | "camel-case"
@@ -1285,46 +1239,36 @@ type exportLocalsConvention =
   | ((name: string) => string);
 ```
 
-Default: Depends on the value of the `modules.namedExport` option:
-
-- If `true` - `as-is`
-- Otherwise `camel-case-only` (class names converted to camelCase, original name removed).
-
-> [!WARNING]
->
-> Names of locals are converted to camelCase when the named export is `false`, i.e. the `exportLocalsConvention` option has`camelCaseOnly` value by default.
-> You can set this back to any other valid option but selectors which are not valid JavaScript identifiers may run into problems which do not implement the entire modules specification.
+Names of locals are converted to camelCase when the named export is `false`,
+i.e. the `exportLocalsConvention` option has the `camelCaseOnly` value by
+default. You can set this back to any other valid option, but selectors which
+are not valid JavaScript identifiers may run into problems which do not
+implement the entire modules specification.
 
 Style of exported class names.
 
 ###### `string`
 
-By default, the exported JSON keys mirror the class names (i.e `as-is` value).
+By default, the exported JSON keys mirror the class names (i.e. `as-is` value).
 
 |          Name           |   Type   | Description                                                                                         |
 | :---------------------: | :------: | :-------------------------------------------------------------------------------------------------- |
 |      **`'as-is'`**      | `string` | Class names will be exported as is.                                                                 |
-|   **`'camel-case'`**    | `string` | Class names will be camelCased, but the original class name will not to be removed from the locals. |
+|   **`'camel-case'`**    | `string` | Class names will be camelCased, but the original class name will not be removed from the locals.    |
 | **`'camel-case-only'`** | `string` | Class names will be camelCased, and original class name will be removed from the locals.            |
 |     **`'dashes'`**      | `string` | Only dashes in class names will be camelCased                                                       |
 |   **`'dashes-only'`**   | `string` | Dashes in class names will be camelCased, the original class name will be removed from the locals   |
 
-**file.css**
-
-```css
+```css displayName="file.css"
 .class-name {
 }
 ```
 
-**file.js**
-
-```js
+```js displayName="file.js"
 import { className } from "file.css";
 ```
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1344,9 +1288,7 @@ module.exports = {
 
 ###### `function`
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1366,9 +1308,7 @@ module.exports = {
 };
 ```
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1396,25 +1336,21 @@ module.exports = {
 
 ##### `exportOnlyLocals`
 
-Type:
+- Type: {boolean}
+- **Default:** `false`.
 
-```ts
+```ts displayName="Type"
 type exportOnlyLocals = boolean;
 ```
 
-Default: `false`
-
 Export only locals.
 
-**Useful** when you use **css modules** for pre-rendering (for example SSR).
+Useful when you use CSS modules for pre-rendering (for example SSR). For
+pre-rendering with `mini-css-extract-plugin` you should use this option instead
+of `style-loader!css-loader` in the pre-rendering bundle. It doesn't embed CSS;
+it only exports the identifier mappings.
 
-For pre-rendering with `mini-css-extract-plugin` you should use this option instead of `style-loader!css-loader` **in the pre-rendering bundle**.
-
-It doesn't embed CSS; it only exports the identifier mappings.
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1434,9 +1370,10 @@ module.exports = {
 
 ##### `getJSON`
 
-Type:
+- Type: {Function}
+- **Default:** `undefined`.
 
-```ts
+```ts displayName="Type"
 type getJSON = ({
   resourcePath,
   imports,
@@ -1450,15 +1387,14 @@ type getJSON = ({
 }) => Promise<void> | void;
 ```
 
-Default: `undefined`
-
 Enables a callback to output the CSS modules mapping JSON.
 
 The callback is invoked with an object containing the following:
 
-- `resourcePath`: the absolute path of the original resource, e.g., `/foo/bar/baz.module.css`
-
-- `imports`: an array of import objects with data about import types and file paths, e.g.,
+- `resourcePath`: the absolute path of the original resource, e.g.,
+  `/foo/bar/baz.module.css`
+- `imports`: an array of import objects with data about import types and file
+  paths, e.g.,
 
 ```json
 [
@@ -1472,7 +1408,8 @@ The callback is invoked with an object containing the following:
 ]
 ```
 
-(Note that this will include all imports, not just those relevant to CSS Modules.)
+(Note that this will include all imports, not just those relevant to CSS
+Modules.)
 
 - `exports`: an array of export objects with exported names and values, e.g.,
 
@@ -1485,7 +1422,8 @@ The callback is invoked with an object containing the following:
 ]
 ```
 
-- `replacements`: an array of import replacement objects used for linking `imports` and `exports`, e.g.,
+- `replacements`: an array of import replacement objects used for linking
+  `imports` and `exports`, e.g.,
 
 ```json
 {
@@ -1497,11 +1435,11 @@ The callback is invoked with an object containing the following:
 
 Using `getJSON`, it's possible to output a file with all CSS module mappings.
 
-In the following example, we use `getJSON` to cache canonical mappings and add stand-ins for any composed values (through `composes`), and we use a custom plugin to consolidate the values and output them to a file:
+In the following example, we use `getJSON` to cache canonical mappings and add
+stand-ins for any composed values (through `composes`), and we use a custom
+plugin to consolidate the values and output them to a file:
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 const path = require("path");
 const fs = require("fs");
 
@@ -1662,7 +1600,10 @@ module.exports = {
 };
 ```
 
-In the above, all import aliases are replaced with `___REPLACEMENT[<resourcePath>][<localName>]___` in `getJSON`, and they're resolved in the custom plugin. All CSS mappings are contained in `allExportsJson`:
+In the above, all import aliases are replaced with
+`___REPLACEMENT[<resourcePath>][<localName>]___` in `getJSON`, and they're
+resolved in the custom plugin. All CSS mappings are contained in
+`allExportsJson`:
 
 ```json
 {
@@ -1681,21 +1622,22 @@ This is saved to a local file named `output.css.json`.
 
 ### `importLoaders`
 
-Type:
+- Type: {number}
+- **Default:** `0`.
 
-```ts
+```ts displayName="Type"
 type importLoaders = number;
 ```
 
-Default: `0`
+Allows enabling/disabling or setting up the number of loaders applied before
+the CSS loader for `@import` at-rules, CSS Modules and ICSS imports, i.e.
+`@import`/`composes`/`@value value from './values.css'`/etc.
 
-Allows to enables/disables or sets up the number of loaders applied before CSS loader for `@import` at-rules, CSS Modules and ICSS imports, i.e. `@import`/`composes`/`@value value from './values.css'`/etc.
+The `importLoaders` option allows you to configure how many loaders before
+`css-loader` should be applied to `@import`ed resources and CSS Modules/ICSS
+imports.
 
-The option `importLoaders` allows you to configure how many loaders before `css-loader` should be applied to `@import`ed resources and CSS Modules/ICSS imports.
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1721,23 +1663,23 @@ module.exports = {
 };
 ```
 
-This may change in the future when the module system (i. e. webpack) supports loader matching by origin.
+This may change in the future when the module system (i.e. webpack) supports
+loader matching by origin.
 
 ### `sourceMap`
 
-Type:
+- Type: {boolean}
+- **Default:** depends on the `compiler.devtool` value.
 
-```ts
+```ts displayName="Type"
 type sourceMap = boolean;
 ```
 
-Default: depends on the `compiler.devtool` value
+By default, generation of source maps depends on the [`devtool`](https://webpack.js.org/configuration/devtool/)
+option. All values enable source map generation except `eval` and `false`
+values.
 
-By default generation of source maps depends on the [`devtool`](https://webpack.js.org/configuration/devtool/) option. All values enable source map generation except `eval` and `false` values.
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1755,23 +1697,21 @@ module.exports = {
 
 ### `esModule`
 
-Type:
+- Type: {boolean}
+- **Default:** `true`.
 
-```ts
+```ts displayName="Type"
 type esModule = boolean;
 ```
 
-Default: `true`
-
 By default, `css-loader` generates JS modules that use the ES modules syntax.
 
-There are some cases in which using ES modules is beneficial, like in the case of [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
+There are some cases in which using ES modules is beneficial, like in the case
+of [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
 
 You can enable CommonJS module syntax using:
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1789,21 +1729,20 @@ module.exports = {
 
 ### `exportType`
 
-Type:
+- Type: {string}
+- **Default:** `'array'`.
 
-```ts
+```ts displayName="Type"
 type exportType = "array" | "string" | "css-style-sheet";
 ```
 
-Default: `'array'`
+Allows exporting styles as an array with modules, a string, or a [constructable
+stylesheet][constructable-stylesheets] (i.e. [`CSSStyleSheet`][css-style-sheet]).
 
-Allows exporting styles as array with modules, string or [constructable stylesheet](https://developers.google.com/web/updates/2019/02/constructable-stylesheets) (i.e. [`CSSStyleSheet`](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet)).
+The default value is `'array'`, i.e. the loader exports an array of modules with
+a specific API which is used in `style-loader` or other.
 
-The default value is `'array'`, i.e. loader exports an array of modules with a specific API which is used in `style-loader` or other.
-
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1819,9 +1758,7 @@ module.exports = {
 };
 ```
 
-**src/index.js**
-
-```js
+```js displayName="src/index.js"
 import sheet from "./styles.css" assert { type: "css" };
 
 document.adoptedStyleSheets = [sheet];
@@ -1830,11 +1767,10 @@ shadowRoot.adoptedStyleSheets = [sheet];
 
 #### `'array'`
 
-The default export is array of modules with specific API which is used in `style-loader` or other.
+The default export is an array of modules with a specific API which is used in
+`style-loader` or other.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1847,26 +1783,22 @@ module.exports = {
 };
 ```
 
-**src/index.js**
-
-```js
+```js displayName="src/index.js"
 // `style-loader` applies styles to DOM
 import "./styles.css";
 ```
 
 #### `'string'`
 
-> [!WARNING]
->
-> You should not use [`style-loader`](https://github.com/webpack/style-loader) or [`mini-css-extract-plugin`](https://github.com/webpack/mini-css-extract-plugin) with this value.
->
-> The `esModule` option should be enabled if you want to use it with [`CSS modules`](https://github.com/webpack/css-loader#modules). By default for locals [named export](https://github.com/webpack/css-loader#namedexport) will be used.
+You should not use [`style-loader`][style-loader] or
+[`mini-css-extract-plugin`][mini-css-extract-plugin] with this value. The
+`esModule` option should be enabled if you want to use it with
+[`CSS modules`][modules]. By default, for locals,
+[named export][named-export] will be used.
 
-The default export is `string`.
+The default export is a `string`.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1879,9 +1811,7 @@ module.exports = {
 };
 ```
 
-**src/index.js**
-
-```js
+```js displayName="src/index.js"
 import sheet from "./styles.css";
 
 console.log(sheet);
@@ -1889,34 +1819,28 @@ console.log(sheet);
 
 #### `'css-style-sheet'`
 
-> [!WARNING]
->
-> `@import` rules not yet allowed, more [information](https://web.dev/css-module-scripts/#@import-rules-not-yet-allowed)
+`@import` rules are not yet allowed, more [information](https://web.dev/css-module-scripts/#@import-rules-not-yet-allowed).
 
-> [!WARNING]
->
-> You don't need [`style-loader`](https://github.com/webpack/style-loader) anymore, please remove it.
+You don't need [`style-loader`][style-loader] anymore, please remove it.
 
-> [!WARNING]
->
-> The `esModule` option should be enabled if you want to use it with [`CSS modules`](https://github.com/webpack/css-loader#modules). By default for locals [named export](https://github.com/webpack/css-loader#namedexport) will be used.
+The `esModule` option should be enabled if you want to use it with
+[`CSS modules`][modules]. By default, for locals,
+[named export][named-export] will be used.
 
-> [!WARNING]
->
-> Source maps are not currently supported in `Chrome` due to a [bug](https://bugs.chromium.org/p/chromium/issues/detail?id=1174094&q=CSSStyleSheet%20source%20maps&can=2)
+Source maps are not currently supported in `Chrome` due to a
+[bug](https://bugs.chromium.org/p/chromium/issues/detail?id=1174094&q=CSSStyleSheet%20source%20maps&can=2).
 
-The default export is a [constructable stylesheet](https://developers.google.com/web/updates/2019/02/constructable-stylesheets) (i.e. [`CSSStyleSheet`](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet)).
+The default export is a [constructable stylesheet][constructable-stylesheets]
+(i.e. [`CSSStyleSheet`][css-style-sheet]).
 
 Useful for [custom elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) and shadow DOM.
 
 More information:
 
 - [Using CSS Module Scripts to import stylesheets](https://web.dev/css-module-scripts/)
-- [Constructable Stylesheets: seamless reusable styles](https://developers.google.com/web/updates/2019/02/constructable-stylesheets)
+- [Constructable Stylesheets: seamless reusable styles][constructable-stylesheets]
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -1953,9 +1877,7 @@ module.exports = {
 };
 ```
 
-**src/index.js**
-
-```js
+```js displayName="src/index.js"
 // Example for Sass/SCSS:
 // import sheet from "./styles.scss" assert { type: "css" };
 
@@ -2008,19 +1930,19 @@ module.exports = {
 
 ### Recommend
 
-For `production` builds, it's recommended to extract the CSS from your bundle being able to use parallel loading of CSS/JS resources later on.
+For `production` builds, it's recommended to extract the CSS from your bundle,
+being able to use parallel loading of CSS/JS resources later on.
 
-This can be achieved by using the [mini-css-extract-plugin](https://github.com/webpack/mini-css-extract-plugin), because it creates separate css files.
+This can be achieved by using the [mini-css-extract-plugin][mini-css-extract-plugin],
+because it creates separate CSS files.
 
-For `development` mode (including `webpack-dev-server`) you can use [style-loader](https://github.com/webpack/style-loader), because it injects CSS into the DOM using multiple `<style></style>` and works faster.
+For `development` mode (including `webpack-dev-server`) you can use
+[style-loader][style-loader], because it injects CSS into the DOM using multiple
+`<style></style>` and works faster.
 
-> [!NOTE]
->
-> Do not use `style-loader` and `mini-css-extract-plugin` together.
+Do not use `style-loader` and `mini-css-extract-plugin` together.
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const devMode = process.env.NODE_ENV !== "production";
 
@@ -2046,7 +1968,8 @@ module.exports = {
 
 ### Disable URL resolving using the `/* webpackIgnore: true */` comment
 
-With the help of the `/* webpackIgnore: true */`comment, it is possible to disable sources handling for rules and for individual declarations.
+With the help of the `/* webpackIgnore: true */` comment, it is possible to
+disable sources handling for rules and for individual declarations.
 
 ```css
 /* webpackIgnore: true */
@@ -2101,13 +2024,13 @@ With the help of the `/* webpackIgnore: true */`comment, it is possible to disab
 
 ### Assets
 
-The following `webpack.config.js` can load CSS files, embed small PNG/JPG/GIF/SVG images as well as fonts as [Data URLs](https://tools.ietf.org/html/rfc2397) and copy larger files to the output directory.
+The following `webpack.config.js` can load CSS files, embed small
+PNG/JPG/GIF/SVG images as well as fonts as [Data URLs](https://tools.ietf.org/html/rfc2397) and copy
+larger files to the output directory.
 
-**For webpack v5:**
+For webpack v5:
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -2127,19 +2050,24 @@ module.exports = {
 
 ### Extract
 
-For production builds it's recommended to extract the CSS from your bundle to enable parallel loading of CSS/JS resources later on.
+For production builds it's recommended to extract the CSS from your bundle to
+enable parallel loading of CSS/JS resources later on.
 
-- This can be achieved by using the [mini-css-extract-plugin](https://github.com/webpack/mini-css-extract-plugin) to extract the CSS when running in production mode.
-
-- As an alternative, if seeking better development performance and css outputs that mimic production. [extract-css-chunks-webpack-plugin](https://github.com/faceyspacey/extract-css-chunks-webpack-plugin) offers a hot module reload friendly, extended version of mini-css-extract-plugin. HMR real CSS files in dev, works like mini-css in non-dev.
+- This can be achieved by using the
+  [mini-css-extract-plugin][mini-css-extract-plugin] to extract the CSS when
+  running in production mode.
+- As an alternative, if seeking better development performance and CSS outputs
+  that mimic production, [extract-css-chunks-webpack-plugin](https://github.com/faceyspacey/extract-css-chunks-webpack-plugin)
+  offers a hot module reload friendly, extended version of
+  mini-css-extract-plugin. It HMRs real CSS files in dev, and works like
+  mini-css in non-dev.
 
 ### Pure CSS, CSS Modules and PostCSS
 
-When you have pure CSS (without CSS modules), CSS modules and PostCSS in your project, you can use this setup:
+When you have pure CSS (without CSS modules), CSS modules and PostCSS in your
+project, you can use this setup:
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -2181,17 +2109,13 @@ module.exports = {
 
 ### Resolve unresolved URLs using an alias
 
-**index.css**
-
-```css
+```css displayName="index.css"
 .class {
   background: url(/assets/unresolved/img.png);
 }
 ```
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -2214,9 +2138,7 @@ module.exports = {
 
 ### Named export with custom export names
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -2239,15 +2161,20 @@ module.exports = {
 
 ### Separating `Interoperable CSS`-only and `CSS Module` features
 
-The following setup is an example of allowing `Interoperable CSS` features only (such as `:import` and `:export`) without using further `CSS Module` functionality by setting the `mode` option for all files that do not match the `*.module.scss` naming convention. This is for reference, as having `ICSS` features applied to all files was default `css-loader` behavior before v4.
+The following setup is an example of allowing `Interoperable CSS` features only
+(such as `:import` and `:export`) without using further `CSS Module`
+functionality by setting the `mode` option for all files that do not match the
+`*.module.scss` naming convention. This is for reference, as having `ICSS`
+features applied to all files was default `css-loader` behavior before v4.
 
-Meanwhile, all files matching `*.module.scss` are treated as `CSS Modules` in this example.
+Meanwhile, all files matching `*.module.scss` are treated as `CSS Modules` in
+this example.
 
-An example case is assumed where a project requires canvas drawing variables to be synchronized with CSS - canvas drawing uses the same color (set by color name in JavaScript) as HTML background (set by class name in CSS).
+An example case is assumed where a project requires canvas drawing variables to
+be synchronized with CSS - canvas drawing uses the same color (set by color name
+in JavaScript) as HTML background (set by class name in CSS).
 
-**webpack.config.js**
-
-```js
+```js displayName="webpack.config.js"
 module.exports = {
   module: {
     rules: [
@@ -2304,33 +2231,28 @@ module.exports = {
 };
 ```
 
-**variables.scss**
+`variables.scss`, treated as `ICSS`-only:
 
-File treated as `ICSS`-only.
-
-```scss
+```scss displayName="variables.scss"
 $colorBackground: red;
 :export {
   colorBackgroundCanvas: $colorBackground;
 }
 ```
 
-**Component.module.scss**
+`Component.module.scss`, treated as a `CSS Module`:
 
-File treated as `CSS Module`.
-
-```scss
+```scss displayName="Component.module.scss"
 @import "variables.scss";
 .componentClass {
   background-color: $colorBackground;
 }
 ```
 
-**Component.jsx**
+`Component.jsx`, using both `CSS Module` functionality as well as SCSS variables
+directly in JavaScript:
 
-Using both `CSS Module` functionality as well as SCSS variables directly in JavaScript.
-
-```jsx
+```jsx displayName="Component.jsx"
 import * as svars from "variables.scss";
 import * as styles from "Component.module.scss";
 
@@ -2344,27 +2266,12 @@ import * as styles from "Component.module.scss";
 ctx.fillStyle = `${svars.colorBackgroundCanvas}`;
 ```
 
-## Contributing
-
-We welcome all contributions!
-
-If you are new here, please take a moment to review our contributing guidelines before submitting issues or pull requests.
-
-[CONTRIBUTING](https://github.com/webpack/css-loader?tab=contributing-ov-file#contributing)
-
-## License
-
-[MIT](./LICENSE)
-
-[npm]: https://img.shields.io/npm/v/css-loader.svg
-[npm-url]: https://npmjs.com/package/css-loader
-[node]: https://img.shields.io/node/v/css-loader.svg
-[node-url]: https://nodejs.org
-[tests]: https://github.com/webpack/css-loader/workflows/css-loader/badge.svg
-[tests-url]: https://github.com/webpack/css-loader/actions
-[cover]: https://codecov.io/gh/webpack/css-loader/branch/main/graph/badge.svg
-[cover-url]: https://codecov.io/gh/webpack/css-loader
-[discussion]: https://img.shields.io/github/discussions/webpack/webpack
-[discussion-url]: https://github.com/webpack/webpack/discussions
-[size]: https://packagephobia.now.sh/badge?p=css-loader
-[size-url]: https://packagephobia.now.sh/result?p=css-loader
+[css-modules]: https://github.com/css-modules/css-modules
+[style-loader]: https://github.com/webpack/style-loader
+[mini-css-extract-plugin]: https://github.com/webpack/mini-css-extract-plugin
+[constructable-stylesheets]: https://developers.google.com/web/updates/2019/02/constructable-stylesheets
+[css-style-sheet]: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet
+[output-hash-digest]: https://webpack.js.org/configuration/output/#outputhashdigest
+[output-hash-digest-length]: https://webpack.js.org/configuration/output/#outputhashdigestlength
+[output-hash-function]: https://webpack.js.org/configuration/output/#outputhashfunction
+[output-hash-salt]: https://webpack.js.org/configuration/output/#outputhashsalt
