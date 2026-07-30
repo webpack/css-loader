@@ -28,6 +28,7 @@ import {
   warningFactory,
   syntaxErrorFactory,
   supportTemplateLiteral,
+  stripBom,
 } from "./utils";
 
 export default async function loader(content, map, meta) {
@@ -174,7 +175,8 @@ export default async function loader(content, map, meta) {
   let result;
 
   try {
-    result = await postcss(plugins).process(content, {
+    // Since PostCSS 8.5.24 it does not strip BOM anymore
+    result = await postcss(plugins).process(stripBom(content), {
       hideNothingWarning: true,
       from: resourcePath,
       to: resourcePath,

@@ -1471,6 +1471,11 @@ function supportTemplateLiteral(loaderContext) {
   return false;
 }
 
+function stripBom(content) {
+  const BOM = 0xfeff;
+  return content.charCodeAt(0) === BOM ? content.slice(1) : content;
+}
+
 export {
   normalizeOptions,
   shouldUseModulesPlugins,
@@ -1499,4 +1504,5 @@ export {
   warningFactory,
   syntaxErrorFactory,
   supportTemplateLiteral,
+  stripBom,
 };

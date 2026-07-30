@@ -1,5 +1,6 @@
 import path from "path";
 
+import postcss from "postcss";
 import postcssPresetEnv from "postcss-preset-env";
 
 import {
@@ -205,6 +206,57 @@ describe("loader", () => {
     );
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
+  });
+
+  it("should not path BOM to postcss (issue #1678)", async () => {
+    const postcssProcessSpy = jest.spyOn(
+      Object.getPrototypeOf(postcss()),
+      "process",
+    );
+
+    const compiler = getCompiler(
+      "./modules/issue-1678/source.js",
+      {},
+      {
+        module: {
+          rules: [
+            {
+              test: /\.css$/i,
+              use: [
+                {
+                  loader: path.resolve(__dirname, "../src"),
+                },
+                {
+                  // Emulate sass-loader@17 with production defaults
+                  // { sassOptions: { outputStyle: 'compressed', charset: true }}
+                  loader: "./modules/issue-1678/with-bom-loader.js",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    );
+
+    const stats = await compile(compiler);
+
+    expect(postcssProcessSpy).toHaveBeenCalledTimes(2);
+    for (const call of postcssProcessSpy.mock.calls) {
+      expect(call[0].startsWith("\uFEFF" /* BOM */)).toBe(false);
+    }
+    expect(
+      getModuleSource("./modules/issue-1678/first.css", stats),
+    ).toMatchSnapshot("module");
+    expect(
+      getModuleSource("./modules/issue-1678/second.css", stats),
+    ).toMatchSnapshot("module");
+    expect(getExecutedCode("source.js", compiler, stats)).toMatchSnapshot(
+      "result",
+    );
+    expect(getWarnings(stats)).toMatchSnapshot("warnings");
+    expect(getErrors(stats)).toMatchSnapshot("errors");
+
+    postcssProcessSpy.mockRestore();
   });
 
   it('should work with "sass-loader"', async () => {
