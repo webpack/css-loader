@@ -1471,6 +1471,27 @@ function supportTemplateLiteral(loaderContext) {
   return false;
 }
 
+const BOM_CODE_POINT = 0xfeff;
+
+// postcss stripped a leading BOM until 8.5.24 and preserves it since, so strip
+// it ourselves: concatenated stylesheets must not carry one in the middle.
+// `content` is a postcss `Root` when a previous loader handed over its AST,
+// and there the BOM lives on the input rather than in the tree.
+function stripBom(content) {
+  if (typeof content === "string") {
+    return content.charCodeAt(0) === BOM_CODE_POINT
+      ? content.slice(1)
+      : content;
+  }
+
+  if (content && content.source && content.source.input) {
+    // eslint-disable-next-line no-param-reassign
+    content.source.input.hasBOM = false;
+  }
+
+  return content;
+}
+
 export {
   normalizeOptions,
   shouldUseModulesPlugins,
@@ -1499,4 +1520,5 @@ export {
   warningFactory,
   syntaxErrorFactory,
   supportTemplateLiteral,
+  stripBom,
 };
