@@ -1,5 +1,6 @@
 import path from "path";
 
+import postcss from "postcss";
 import postcssPresetEnv from "postcss-preset-env";
 
 import {
@@ -203,6 +204,84 @@ describe("loader", () => {
     expect(getExecutedCode("main.bundle.js", compiler, stats)).toMatchSnapshot(
       "result",
     );
+    expect(getWarnings(stats)).toMatchSnapshot("warnings");
+    expect(getErrors(stats)).toMatchSnapshot("errors");
+  });
+
+  it("should not pass a BOM added by a previous loader to postcss", async () => {
+    const BOM = "\uFEFF";
+    const processSpy = jest.spyOn(Object.getPrototypeOf(postcss()), "process");
+    const compiler = getCompiler(
+      "./modules/issue-1678/source.js",
+      {},
+      {
+        module: {
+          rules: [
+            {
+              test: /\.css$/i,
+              use: [
+                { loader: path.resolve(__dirname, "../src") },
+                { loader: "./modules/issue-1678/with-bom-loader.js" },
+              ],
+            },
+          ],
+        },
+      },
+    );
+
+    const stats = await compile(compiler);
+    const executed = getExecutedCode("main.bundle.js", compiler, stats);
+
+    expect(processSpy).toHaveBeenCalledTimes(2);
+
+    for (const [css] of processSpy.mock.calls) {
+      expect(css.startsWith(BOM)).toBe(false);
+    }
+
+    // postcss >= 8.5.24 keeps the BOM, so without stripping it lands between
+    // the two stylesheets and a browser drops the rule after it.
+    expect(executed).not.toContain(BOM);
+    expect(executed).toContain(".first::after");
+    expect(executed).toContain(".second::after");
+
+    expect(
+      getModuleSource("./modules/issue-1678/first.css", stats),
+    ).toMatchSnapshot("module");
+    expect(executed).toMatchSnapshot("result");
+    expect(getWarnings(stats)).toMatchSnapshot("warnings");
+    expect(getErrors(stats)).toMatchSnapshot("errors");
+
+    processSpy.mockRestore();
+  });
+
+  it("should not keep a BOM in an ast reused from a previous loader", async () => {
+    const BOM = "\uFEFF";
+    const compiler = getCompiler(
+      "./modules/issue-1678/source.js",
+      {},
+      {
+        module: {
+          rules: [
+            {
+              test: /\.css$/i,
+              use: [
+                { loader: path.resolve(__dirname, "../src") },
+                { loader: require.resolve("./helpers/ast-loader") },
+                { loader: "./modules/issue-1678/with-bom-loader.js" },
+              ],
+            },
+          ],
+        },
+      },
+    );
+
+    const stats = await compile(compiler);
+    const executed = getExecutedCode("main.bundle.js", compiler, stats);
+
+    expect(executed).not.toContain(BOM);
+    expect(executed).toContain(".first::after");
+    expect(executed).toContain(".second::after");
+
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
