@@ -16,6 +16,14 @@
 
 # css-loader
 
+> [!WARNING]
+>
+> **`css-loader` is deprecated** — webpack parses CSS itself and no longer needs it.
+>
+> Read the [Native CSS guide](https://webpack.js.org/guides/native-css/) and follow its [migration guide](https://webpack.js.org/guides/native-css/#migration-guide).
+>
+> Existing setups keep working: built-in CSS support stays off for any `.css` rule that already has a loader, so you can migrate one rule at a time.
+
 The `css-loader` interprets `@import` and `url()` like `import/require()` and resolves them.
 
 ## Getting Started
