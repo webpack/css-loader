@@ -38,7 +38,8 @@
     "vspace",
     "commitlint",
     "eslintcache",
-    "akait"
+    "akait",
+    "codemod"
   ],
   "ignorePaths": [
     "CHANGELOG.md",
