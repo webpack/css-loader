@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.5](https://github.com/webpack/css-loader/compare/v7.1.4...v7.1.5) (2026-08-28)
+
+
+### Bug Fixes
+
+* strip BOM before processing with postcss ([#1684](https://github.com/webpack/css-loader/issues/1684)) ([bd20834](https://github.com/webpack/css-loader/commit/bd20834e02dc2b2da970e40f713c3e531513aa38))
+
 ### [7.1.4](https://github.com/webpack/css-loader/compare/v7.1.3...v7.1.4) (2026-02-16)
 
 
