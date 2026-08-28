@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "icss-utils": "^5.1.0",
-    "postcss": "^8.4.40",
+    "postcss": "^8.5.23",
     "postcss-modules-extract-imports": "^3.1.0",
     "postcss-modules-local-by-default": "^4.0.5",
     "postcss-modules-scope": "^3.2.0",
@@ -66,7 +66,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.24.8",
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.29.6",
     "@babel/preset-env": "^7.25.3",
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
@@ -83,7 +83,7 @@
     "husky": "^9.1.4",
     "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
-    "less": "^4.2.0",
+    "less": "^4.4.1",
     "less-loader": "^12.2.0",
     "lint-staged": "^15.2.8",
     "memfs": "^4.11.1",
@@ -100,7 +100,7 @@
     "stylus": "^0.63.0",
     "stylus-loader": "^8.1.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.93.0"
+    "webpack": "^5.104.1"
   },
   "keywords": [
     "webpack",
